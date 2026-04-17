@@ -1,9 +1,12 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar class="chat-header">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/tabs/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>Chat Ashbis IA 🐾</ion-title>
+
+    <ion-title class="chat-title">
+      Ashbis IA
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -22,6 +25,15 @@
     </div>
   </ion-list>
 
+  <div class="mensaje-container bot" *ngIf="cargando">
+  <div class="avatar">🐾</div>
+
+  <div class="burbuja typing">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
   <!-- LOADER -->
   <div class="loader" *ngIf="cargando">
     <ion-spinner name="dots"></ion-spinner>
@@ -30,24 +42,45 @@
 
   <!-- PASO 1 -->
   <div *ngIf="pasoActual === 1" class="botones">
-    <ion-button expand="block" color="danger" (click)="seleccionarCategoria('Salud')">1️⃣ Salud 🩺</ion-button>
-    <ion-button expand="block" color="danger" (click)="seleccionarCategoria('Alimentación')">2️⃣ Alimentación 🍖</ion-button>
-    <ion-button expand="block" color="danger" (click)="seleccionarCategoria('Cuidados')">3️⃣ Cuidados 🧴</ion-button>
+    <ion-button expand="block" class="btn-ashbis" (click)="seleccionarCategoria('Salud')">
+      1️⃣ Salud 🩺
+    </ion-button>
+
+    <ion-button expand="block" class="btn-ashbis" (click)="seleccionarCategoria('Alimentación')">
+      2️⃣ Alimentación 🍖
+    </ion-button>
+
+    <ion-button expand="block" class="btn-ashbis" (click)="seleccionarCategoria('Cuidados')">
+      3️⃣ Cuidados 🧴
+    </ion-button>
   </div>
 
   <!-- PASO 2 -->
   <div *ngIf="pasoActual === 2" class="botones">
-    <ion-button expand="block" color="danger" (click)="seleccionarMascota('Perro')">🐶 Perro</ion-button>
-    <ion-button expand="block" color="danger" (click)="seleccionarMascota('Gato')">🐱 Gato</ion-button>
+    <ion-button expand="block" class="btn-ashbis" (click)="seleccionarMascota('Perro')">
+      🐶 Perro
+    </ion-button>
+
+    <ion-button expand="block" class="btn-ashbis" (click)="seleccionarMascota('Gato')">
+      🐱 Gato
+    </ion-button>
   </div>
 
   <!-- INPUT FIJO ABAJO -->
-  <div *ngIf="pasoActual === 3" class="pregunta">
-    <ion-item>
-      <ion-input [(ngModel)]="mensaje" placeholder="Escribe tu pregunta..."></ion-input>
-    </ion-item>
-    <ion-button expand="block" color="success" (click)="enviarPregunta()">Enviar ✉️</ion-button>
-  </div>
+  <div *ngIf="pasoActual === 3" class="input-chat">
+
+  <ion-item lines="none">
+    <ion-input
+      [(ngModel)]="mensaje"
+      placeholder="Escribe tu mensaje..."
+    ></ion-input>
+  </ion-item>
+
+  <ion-button (click)="enviarPregunta()">
+    <ion-icon name="send-outline"></ion-icon>
+  </ion-button>
+
+</div>
 
   <!-- BOTÓN REINICIAR CHAT (BLANCO) -->
   <ion-button expand="block" class="reset-btn" (click)="reiniciarChat()">🔄 Reiniciar chat</ion-button>

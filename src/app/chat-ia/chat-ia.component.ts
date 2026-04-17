@@ -2,7 +2,15 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { environment } from 'src/environments/environment';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonList, IonItem, IonLabel, IonInput, IonSpinner, IonButtons, IonBackButton } from '@ionic/angular/standalone';
+
+import {
+  IonContent, IonHeader, IonTitle, IonToolbar,
+  IonButton, IonList, IonItem, IonLabel,
+  IonInput, IonSpinner, IonButtons, IonBackButton, IonIcon
+} from '@ionic/angular/standalone';
+
+import { addIcons } from 'ionicons';
+import { sendOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-chat-ia',
@@ -23,34 +31,64 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonList, IonIte
     IonInput,
     IonSpinner,
     IonButtons,
-    IonBackButton
+    IonBackButton,
+    IonIcon
   ]
 })
 export class ChatIaComponent {
-  pasoActual: number = 1; 
+
+  pasoActual: number = 1;
   categoriaSeleccionada: string = '';
   mascotaSeleccionada: string = '';
   mensaje: string = '';
-  mensajes: { autor: string; texto: string }[] = [];
+
+  mensajes: {
+    autor: string;
+    texto: string;
+    hora: string;
+  }[] = [];
 
   cargando: boolean = false;
 
+  constructor() {
+    addIcons({ sendOutline });
+  }
+
+  // ⏰ Obtener hora
+  private obtenerHora(): string {
+    const now = new Date();
+    return now.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  // 💬 Agregar mensaje (helper limpio)
+  private agregarMensaje(autor: string, texto: string) {
+    this.mensajes.push({
+      autor,
+      texto,
+      hora: this.obtenerHora()
+    });
+  }
+
+  // 🤖 IA
   async enviarMensajeIA(prompt: string) {
     this.cargando = true;
-    try {
 
+    try {
       const promptFormateado = `
 Eres Ashbis IA, un asistente veterinario para perros y gatos.
 
 Reglas de respuesta:
 - Responde en español.
-- Usa texto plano, SIN Markdown (no uses #, **, listas con números o guiones).
+- Usa texto plano.
 - Máximo 8–10 líneas.
-- Usa frases cortas y fáciles de leer en el celular.
+- Frases cortas.
 
-Pregunta del usuario:
+Pregunta:
 ${prompt}
-    `.trim();
+      `.trim();
 
       const response = await fetch(
         'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=' + environment.geminiApiKey,
@@ -64,75 +102,70 @@ ${prompt}
       );
 
       const data = await response.json();
-      console.log('Respuesta de Gemini:', data);
 
       if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-        this.mensajes.push({
-          autor: 'Ashbis IA',
-          texto: data.candidates[0].content.parts[0].text,
-        });
+        this.agregarMensaje('Ashbis IA', data.candidates[0].content.parts[0].text);
       } else if (data?.error) {
-        this.mensajes.push({
-          autor: 'Ashbis IA',
-          texto: '⚠️ Error en la respuesta: ' + data.error.message,
-        });
+        this.agregarMensaje('Ashbis IA', '⚠️ ' + data.error.message);
       } else {
-        this.mensajes.push({
-          autor: 'Ashbis IA',
-          texto: 'Lo siento, no entendí la respuesta. 😅',
-        });
+        this.agregarMensaje('Ashbis IA', 'No entendí la respuesta 😅');
       }
 
     } catch (error) {
-      console.error('Error al conectar con Gemini:', error);
-      this.mensajes.push({
-        autor: 'Ashbis IA',
-        texto: '🚨 Ocurrió un error al procesar tu mensaje.',
-      });
+      console.error(error);
+      this.agregarMensaje('Ashbis IA', '🚨 Error al procesar tu mensaje.');
     } finally {
       this.cargando = false;
     }
   }
 
+  // 🧩 PASOS
 
   seleccionarCategoria(categoria: string) {
     this.categoriaSeleccionada = categoria;
-    this.mensajes.push({ autor: 'Ashbis IA', texto: `Perfecto 🐾. ¿Qué tipo de mascota tienes?` });
+    this.agregarMensaje('Ashbis IA', 'Perfecto 🐾 ¿Qué tipo de mascota tienes?');
     this.pasoActual = 2;
   }
 
   seleccionarMascota(tipo: string) {
     this.mascotaSeleccionada = tipo;
-    this.mensajes.push({
-      autor: 'Ashbis IA',
-      texto: `Excelente 🐶🐱. Ahora escribe tu pregunta sobre ${this.categoriaSeleccionada} de tu ${this.mascotaSeleccionada}.`,
-    });
+    this.agregarMensaje(
+      'Ashbis IA',
+      `Excelente 🐶🐱 Ahora escribe tu pregunta sobre ${this.categoriaSeleccionada} de tu ${this.mascotaSeleccionada}.`
+    );
     this.pasoActual = 3;
   }
 
   async enviarPregunta() {
     if (!this.mensaje.trim()) return;
 
-    const preguntaFinal = `Tema: ${this.categoriaSeleccionada}, Mascota: ${this.mascotaSeleccionada}. Pregunta: ${this.mensaje}`;
-    this.mensajes.push({ autor: 'Tú', texto: this.mensaje });
+    const textoUsuario = this.mensaje;
+
+    this.agregarMensaje('Tú', textoUsuario);
     this.mensaje = '';
+
+    const preguntaFinal =
+      `Tema: ${this.categoriaSeleccionada}, Mascota: ${this.mascotaSeleccionada}. Pregunta: ${textoUsuario}`;
 
     await this.enviarMensajeIA(preguntaFinal);
   }
 
+  // 🔄 Reset
   reiniciarChat() {
     this.pasoActual = 1;
     this.categoriaSeleccionada = '';
     this.mascotaSeleccionada = '';
     this.mensaje = '';
     this.mensajes = [];
+
     this.ngOnInit();
   }
 
+  // 👋 Init
   ngOnInit() {
-    this.mensajes.push({
-      autor: 'Ashbis IA',
-      texto: '👋 ¡Hola! Soy Ashbis IA, tu asistente virtual para cuidar a tus mascotas. ¿Sobre qué quieres aprender hoy?',
-    });
+    this.agregarMensaje(
+      'Ashbis IA',
+      '👋 Hola, soy Ashbis IA. ¿Sobre qué quieres aprender hoy?'
+    );
   }
 }
