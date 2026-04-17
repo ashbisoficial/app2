@@ -1,0 +1,202 @@
+/* ============================
+   AJUSTE GENERAL RESPONSIVE
+============================ */
+ion-content {
+  --background: #070707;
+  color: #ffffff;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-top: 40px; /* baja todo el contenido para que el logo no tape */
+}
+
+/* Evita que el contenido quede pegado a los bordes del celular */
+.page-wrapper {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ============================
+   LOGO AJUSTADO
+============================ */
+ion-thumbnail {
+  --size: 120px;       /* más pequeño para que no se corte */
+  margin: 10px auto 25px auto;
+  margin-top: 35px;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+/* ============================
+   TÍTULO
+============================ */
+.titulo {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+/* ============================
+   INPUTS
+============================ */
+
+/* contenedor */
+.input-container {
+  width: 100%;
+  max-width: 350px;
+}
+
+/* ion-item */
+ion-item {
+  --background: transparent !important;
+  --highlight-color-focused: #d30000 !important;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+/* Línea roja más corta y centrada */
+ion-item::part(native) {
+  border-bottom: 2px solid #d30000 !important;
+  width: 90%;           /* antes 100%, ahora más corto */
+  margin: 5px auto;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+/* label y texto */
+ion-label {
+  color: #ffffff !important;
+  font-size: 14px;
+}
+
+ion-input::part(input) {
+  color: #ffffff;
+}
+
+/* ============================
+   MENSAJES DE ERROR
+============================ */
+/* ======= Mensajes de error (ALINEADOS CON LA LÍNEA ROJA) ======= */
+ion-text[color="danger"] {
+  display: block;
+  width: 90%;                       /* coincide con la anchura de la línea roja */
+  margin: -8px auto 10px auto;
+  font-size: 12px;
+  box-sizing: border-box;
+
+  /* Esto alinea el texto con el inicio de la línea roja:
+     - la línea roja tiene width:90% y está centrada,
+     - por tanto hay un hueco lateral = (100% - 90%) / 2 = 5% a cada lado.
+     Sumamos además el padding interno de la línea roja (6px) para que coincida exactamente. */
+  padding-left: calc(5% + 6px);
+  color: #d50d0d;                   /* aseguro color de error */
+}
+
+/* evitar márgenes inesperados del <p> y forzar alineación a la izquierda */
+ion-text[color="danger"] p {
+  margin: 10;
+  padding: 0;
+  text-align: left;
+  line-height: 1.2;
+}
+
+
+/* ============================
+   BOTONES
+============================ */
+
+/* Botón ingresar */
+ion-button[color="danger"] {
+  --background: #d30000;
+  --background-hover: #b80000;
+  --border-radius: 30px;
+  width: 90%;
+  max-width: 320px;
+  height: 43px;
+  margin: 18px auto;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+/* Botón Google */
+.google-btn {
+  width: 90%;
+  max-width: 320px;
+  height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  background-color: #ffffff;
+  border: 1px solid #dadce0;
+  border-radius: 25px;
+  margin: 15px auto;
+  color: #070707;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.google-btn img {
+  width: 26px;
+  height: 26px;
+}
+
+/* Link olvidar contraseña */
+.btn-olvido {
+  font-size: 13px;
+  margin-top: 0px;
+  text-align: center;
+  display: block;
+  color: #ffffff;
+}
+
+/* Botón crear */
+ion-button[color="medium"] {
+  --background: #d30000;
+  --color: #ffffff;
+  --border-radius: 30px;
+  width: 90%;
+  max-width: 320px;
+  height: 43px;
+  margin: 18px auto 10px auto;
+  font-weight: bold;
+}
+
+/* Texto inferior */
+small {
+  text-align: center;
+  display: block;
+  margin-top: 8px;
+}
+
+/* ============================
+   LINK www.ashbis.com
+============================ */
+.enlace {
+   display: block;
+  text-align: center !important;
+  color: #ffffff;
+  margin: 10px auto 0 auto;
+  font-size: 10px;
+  width: 100%;
+  
+}
+
+.enlace::part(native) {
+  justify-content: center;
+  padding: 0;
+}
+
+
+/* Lo subimos un poco para evitar que quede detrás del menú inferior */
+.safe-bottom-space {
+  height: 40px;
+}
+
+
+

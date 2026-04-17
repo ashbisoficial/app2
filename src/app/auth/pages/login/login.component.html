@@ -1,0 +1,94 @@
+<ion-content [fullscreen]="true">
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <div class="page-wrapper">
+
+    <div class="login-container">
+
+      <!-- LOGO -->
+      <ion-thumbnail>
+        <ion-img src="assets/img/logo_ashbis.jpeg"></ion-img>
+      </ion-thumbnail>
+
+      <h1 class="titulo">¡Bienvenido!</h1>
+
+      <form [formGroup]="datosForm" (ngSubmit)="login()">
+
+        <!-- EMAIL -->
+        <ion-item lines="none">
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input
+            type="email"
+            formControlName="email">
+          </ion-input>
+        </ion-item>
+
+        <!-- ERRORES EMAIL -->
+        <ion-text color="danger" *ngIf="email.invalid && (email.dirty || email.touched)">
+          <p *ngIf="email.errors?.['required']">El email es obligatorio.</p>
+          <p *ngIf="email.errors?.['email']">Debe ser un correo válido.</p>
+        </ion-text>
+
+        <!-- PASSWORD -->
+        <ion-item lines="none">
+          <ion-label position="stacked">Contraseña</ion-label>
+
+          <ion-input
+            [type]="showPass ? 'text' : 'password'"
+            formControlName="password">
+          </ion-input>
+
+          <ion-button fill="clear" slot="end" (click)="showPass = !showPass">
+            <ion-icon [name]="showPass ? 'eye-off' : 'eye'"></ion-icon>
+          </ion-button>
+        </ion-item>
+
+        <!-- ERRORES PASSWORD -->
+        <ion-text color="danger" *ngIf="password.invalid && (password.dirty || password.touched)">
+          <p *ngIf="password.errors?.['required']">La contraseña es obligatoria.</p>
+          <p *ngIf="password.errors?.['minlength']">Debe tener al menos 6 caracteres.</p>
+        </ion-text>
+
+        <!-- ERROR LOGIN BACKEND -->
+        <ion-text color="danger" *ngIf="loginError">
+          <p>{{ loginError }}</p>
+        </ion-text>
+
+        <!-- BOTÓN INGRESAR -->
+        <ion-button type="submit" color="danger" expand="block">
+          INGRESAR
+        </ion-button>
+
+        <!-- BOTÓN GOOGLE -->
+        <button type="button" class="google-btn" (click)="loginGoogle()">
+          <img src="assets/icon/google_logo.png" alt="Google logo" />
+          <span>Sign in with Google</span>
+        </button>
+
+        <!-- OLVIDO CONTRASEÑA -->
+        <ion-button fill="clear" class="btn-olvido" (click)="irARecuperarPassword()">
+          Olvidé mi contraseña
+        </ion-button>
+
+        <!-- BOTÓN REGISTRO -->
+        <ion-button color="medium" expand="block" (click)="irARegistro()">
+          CREAR
+        </ion-button>
+
+        <small>¿No tienes una cuenta?</small>
+
+      </form>
+
+      <!-- ENLACE FINAL -->
+      <ion-button class="enlace" fill="clear" href="https://www.ashbis.com">
+        www.ashbis.com
+      </ion-button>
+
+    </div>
+
+  </div>
+
+  <!-- ESPACIO SEGURO PARA QUE NO SE TAPE EL LINK -->
+  <div class="safe-bottom-space"></div>
+
+</ion-content>

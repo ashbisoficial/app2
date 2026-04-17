@@ -1,0 +1,819 @@
+<ion-header translucent="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/listar-mascotas"></ion-back-button>
+
+
+    </ion-buttons>
+    <ion-title>Editar Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ng-container *ngIf="!loading(); else skel">
+    <ion-grid fixed *ngIf="mascota() as m">
+      <ion-row class="ion-justify-content-center ion-padding-top">
+        <!-- Menú lateral -->
+        <ion-col size="12" sizeMd="4" sizeLg="3">
+          <ion-list lines="none">
+            <ion-item class="ion-text-center" lines="none">
+              <ion-avatar style="margin:0 auto;">
+                <img [src]="avatar" alt="foto" />
+              </ion-avatar>
+            </ion-item>
+
+            <ion-item lines="none">
+              <ion-label class="ion-text-center" style="font-weight:700">{{ m.nombre }}</ion-label>
+            </ion-item>
+
+            <ion-item lines="none">
+              <ion-button expand="block" [fill]="section()==='info' ? 'solid' : 'outline'" color="danger" (click)="setSection('info')">
+                Info Mascota
+              </ion-button>
+            </ion-item>
+
+            <ion-item lines="none">
+              <ion-button expand="block" [fill]="section()==='calendario' ? 'solid' : 'outline'" color="medium" (click)="setSection('calendario')">
+                Calendario
+              </ion-button>
+            </ion-item>
+
+            <ion-item lines="none">
+              <ion-button expand="block" [fill]="section()==='vacunas' ? 'solid' : 'outline'" color="medium" (click)="setSection('vacunas')">
+                Vacunas
+              </ion-button>
+            </ion-item>
+
+            <ion-item lines="none">
+              <ion-button expand="block" [fill]="section()==='examenes' ? 'solid' : 'outline'" color="medium" (click)="setSection('examenes')">
+                Exámenes
+              </ion-button>
+            </ion-item>
+
+            <ion-item lines="none">
+              <ion-button expand="block" [fill]="section()==='medicamentos' ? 'solid' : 'outline'" color="medium" (click)="setSection('medicamentos')">
+                Medicamentos
+              </ion-button>
+            </ion-item>            
+          </ion-list>
+        </ion-col>
+
+        <!-- Contenido -->
+        <ion-col size="12" sizeMd="8" sizeLg="7">
+          <!-- INFO (editable) -->
+          <form *ngIf="section()==='info'" [formGroup]="form" (ngSubmit)="guardarInfo()">
+            <ion-list inset="true">
+              <ion-item>
+                <ion-label position="stacked">Nombre</ion-label>
+                <ion-input formControlName="nombre" clearInput></ion-input>
+                <ion-note color="danger" *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid">
+                  Requerido (máx. 60)
+                </ion-note>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Número de chip</ion-label>
+                <ion-input formControlName="numeroChip" inputmode="numeric" clearInput></ion-input>
+                <ion-note color="danger" *ngIf="form.get('numeroChip')?.touched && form.get('numeroChip')?.invalid">
+                  Solo números
+                </ion-note>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Edad</ion-label>
+                <ion-input type="number" formControlName="edad" inputmode="numeric" min="0" clearInput></ion-input>
+                <ion-note color="danger" *ngIf="form.get('edad')?.touched && form.get('edad')?.invalid">
+                  Debe ser ≥ 0
+                </ion-note>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Sexo</ion-label>
+                <ion-select formControlName="sexo" interface="popover" placeholder="Selecciona">
+                  <ion-select-option value="Macho">Macho</ion-select-option>
+                  <ion-select-option value="Hembra">Hembra</ion-select-option>
+                  <ion-select-option value="No binario">No binario</ion-select-option>
+                </ion-select>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Especie</ion-label>
+                <ion-select formControlName="especie" interface="popover" placeholder="Perro, Gato, Otro">
+                  <ion-select-option value="Perro">Perro</ion-select-option>
+                  <ion-select-option value="Gato">Gato</ion-select-option>
+                  <ion-select-option value="Otro">Otro</ion-select-option>
+                </ion-select>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Raza</ion-label>
+                <ion-input formControlName="raza" clearInput></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Color</ion-label>
+                <ion-input formControlName="color" clearInput></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Castrado / Esterilizado</ion-label>
+                <ion-select formControlName="castrado" interface="popover" placeholder="Selecciona">
+                  <ion-select-option value="Sí">Sí</ion-select-option>
+                  <ion-select-option value="No">No</ion-select-option>
+                </ion-select>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="stacked">Fecha de nacimiento</ion-label>
+                <ion-datetime-button datetime="dt-nac" class="ion-margin-top ion-margin-bottom"></ion-datetime-button>
+                <ion-modal [keepContentsMounted]="true">
+                  <ng-template>
+                    <ion-datetime
+                      id="dt-nac"
+                      presentation="date"
+                      [max]="fechaMax"
+                      [value]="form.get('fechaNacimiento')?.value"
+                      (ionChange)="onIonDateChange($event)"
+                      locale="es-ES">
+                    </ion-datetime>
+                  </ng-template>
+                </ion-modal>
+                <ion-note slot="end" color="medium">
+                  {{ form.get('fechaNacimiento')?.value ? (form.get('fechaNacimiento')?.value | date:'dd-MM-yyyy') : 'Sin seleccionar' }}
+                </ion-note>
+              </ion-item>
+            </ion-list>
+
+            <ion-button
+              type="submit"
+              expand="block"
+              color="danger"
+              [disabled]="saving() || form.invalid">
+              {{ saving() ? 'Guardando...' : 'Guardar cambios' }}
+            </ion-button>
+
+            <!-- GALERÍA -->
+            <ion-list inset="true" class="ion-margin-top">
+              <ion-item lines="full">
+                <ion-label>
+                  <h3>Galería</h3>
+                  <p class="ion-text-wrap">Añade o elimina fotos de tu mascota.</p>
+                </ion-label>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  hidden
+                  #galInput
+                  (change)="onAddPhotos($event)" />
+                <ion-button slot="end" color="danger" [disabled]="uploading()" (click)="galInput.click()">
+                  <ion-icon name="images-outline" slot="start"></ion-icon>
+                  {{ uploading() ? 'Subiendo…' : 'Agregar fotos' }}
+                </ion-button>
+              </ion-item>
+
+              <ion-item lines="none" *ngIf="mascota()?.galeria?.length; else noGal">
+                <ion-grid>
+                  <ion-row>
+                    <ion-col size="5" sizeMd="5" sizeLg="5" *ngFor="let url of mascota()?.galeria">
+                      <ion-card class="gal-thumb">
+                        <img [src]="url" alt="foto" />
+                        <ion-card-content>
+                          <ion-button size="small" fill="outline" color="medium" (click)="setAsPrincipal(url)">
+                            Principal
+                          </ion-button>
+                          <ion-button size="small" fill="solid" color="danger" (click)="onRemovePhoto(url)">
+                            <ion-icon name="trash-outline" slot="start"></ion-icon>
+                            Borrar
+                          </ion-button>
+                        </ion-card-content>
+                      </ion-card>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </ion-item>
+
+              <ng-template #noGal>
+                <ion-item>
+                  <ion-label color="medium">Sin fotos en galería.</ion-label>
+                </ion-item>
+              </ng-template>
+            </ion-list>
+          </form>
+
+          <!-- PLACEHOLDERS -->
+          <!-- CALENDARIO / AGENDA -->
+          <!-- CALENDARIO / AGENDA -->
+          <ion-list *ngIf="section()==='calendario'" inset="true">
+            <ion-item lines="full">
+              <ion-label>
+                <h3>Calendario de Citas</h3>
+                <p class="ion-text-wrap">Selecciona fecha o mes para gestionar y ver citas.</p>
+              </ion-label>
+            </ion-item>
+
+            <ion-item lines="full">
+              <!-- Botón crear -->
+              <ion-button slot="end" color="danger" (click)="abrirNuevaCita()">
+                <ion-icon name="add-outline" slot="start"></ion-icon>
+                Nueva cita
+              </ion-button>
+
+              <!-- Toggle Día / Mes -->
+              <ion-segment [value]="viewMode()" (ionChange)="onViewModeChange($event)">
+                <ion-segment-button value="dia"><ion-label>Día</ion-label></ion-segment-button>
+                <ion-segment-button value="mes"><ion-label>Mes</ion-label></ion-segment-button>
+              </ion-segment>
+            </ion-item>
+
+            <!-- Controles según modo -->
+            <ion-item lines="none" *ngIf="viewMode()==='dia'">
+              <ion-label>
+                <strong>Seleccionado:</strong>
+                {{ fechaSeleccionada() | date:"EEEE d 'de' MMMM 'de' y":"":"es-CL" }}
+              </ion-label>
+
+              <ion-datetime-button datetime="dt-cal" slot="end" class="ion-margin-start"></ion-datetime-button>
+              <ion-modal [keepContentsMounted]="true" cssClass="calendar-modal">
+                <ng-template>
+                  <ion-datetime
+                    id="dt-cal"
+                    presentation="date"
+                    [value]="fechaSeleccionada()"
+                    (ionChange)="onCalendarioChange($event)"
+                    locale="es-ES">
+                  </ion-datetime>
+                </ng-template>
+              </ion-modal>
+            </ion-item>
+
+            <ion-item lines="none" *ngIf="viewMode()==='mes'">
+              <ion-label>
+                <strong>Mes:</strong>
+                {{ mesSeleccionado() | date:"MMMM 'de' y":"":"es-CL" }}
+              </ion-label>
+
+              <!-- Selector de mes -->
+              <ion-datetime-button datetime="dt-cal-month" slot="end" class="ion-margin-start"></ion-datetime-button>
+              <ion-modal [keepContentsMounted]="true" cssClass="calendar-modal">
+                <ng-template>
+                  <ion-datetime
+                    id="dt-cal-month"
+                    presentation="month-year"
+                    [value]="mesSeleccionado()"
+                    (ionChange)="onMesChange($event)"
+                    locale="es-ES">
+                  </ion-datetime>
+                </ng-template>
+              </ion-modal>
+            </ion-item>
+
+            <!-- LISTADO DÍA -->
+            <ng-container *ngIf="viewMode()==='dia'">
+              <ng-container *ngIf="citasDelDia.length; else sinCitasDia">
+                <ion-item *ngFor="let c of citasDelDia">
+                  <ion-label>
+                    <h3>{{ c.titulo }}</h3>
+                    <p>
+                      {{ c.fechaInicio | date:'HH:mm' }}–{{ c.fechaFin ? (c.fechaFin | date:'HH:mm') : '—' }}
+                      <span *ngIf="c.lugar"> • {{ c.lugar }}</span>
+                    </p>
+                    <p *ngIf="c.notas" class="ion-text-wrap">{{ c.notas }}</p>
+                  </ion-label>
+                  <ion-button fill="outline" color="medium" (click)="abrirEditarCita(c)">
+                    <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+                  </ion-button>
+                  <ion-button color="danger" (click)="borrarCita(c)">
+                    <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                  </ion-button>
+                </ion-item>
+              </ng-container>
+              <ng-template #sinCitasDia>
+                <ion-item><ion-label color="medium">No hay citas para este día.</ion-label></ion-item>
+              </ng-template>
+            </ng-container>
+
+            <!-- LISTADO MES (agrupado por día) -->
+            <!-- LISTADO MES (agrupado por día) -->
+            <ng-container *ngIf="viewMode()==='mes'">
+              <ng-container *ngIf="citasDelMes.length; else sinCitasMes">
+                <ng-container *ngFor="let g of citasMesAgrupadas; trackBy: trackByDia">
+                  <ion-item lines="full" color="light">
+                    <!-- usamos diaKey y lo formateamos con DatePipe -->
+                    <ion-label><strong>{{ (g.diaKey + 'T00:00:00') | date:"EEEE d 'de' MMMM":"":"es-CL" }}</strong></ion-label>
+                  </ion-item>
+
+                  <ion-item *ngFor="let c of g.items; trackBy: trackByCita">
+                    <ion-label>
+                      <h3>{{ c.titulo }}</h3>
+                      <p>
+                        {{ c.fechaInicio | date:'HH:mm' }}–{{ c.fechaFin ? (c.fechaFin | date:'HH:mm') : '—' }}
+                        <span *ngIf="c.lugar"> • {{ c.lugar }}</span>
+                      </p>
+                      <p *ngIf="c.notas" class="ion-text-wrap">{{ c.notas }}</p>
+                    </ion-label>
+                    <ion-button fill="outline" color="medium" (click)="abrirEditarCita(c)">
+                      <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+                    </ion-button>
+                    <ion-button color="danger" (click)="borrarCita(c)">
+                      <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                    </ion-button>
+                  </ion-item>
+                </ng-container>
+              </ng-container>
+              <ng-template #sinCitasMes>
+                <ion-item><ion-label color="medium">No hay citas en este mes.</ion-label></ion-item>
+              </ng-template>
+            </ng-container>
+
+          </ion-list>
+
+
+          <!-- MODAL crear/editar cita -->
+          <ion-modal
+            [isOpen]="citaModalOpen()"
+            (didDismiss)="citaModalOpen.set(false)"
+            [keepContentsMounted]="true">
+
+            <ng-template>
+              <ion-header>
+                <ion-toolbar>
+                  <ion-title>{{ editandoCitaId() ? 'Editar cita' : 'Nueva cita' }}</ion-title>
+                  <ion-buttons slot="end">
+                    <ion-button (click)="citaModalOpen.set(false)">Cerrar</ion-button>
+                  </ion-buttons>
+                </ion-toolbar>
+              </ion-header>
+
+              <ion-content class="ion-padding">
+                <!-- 🔴 importante: no renderizar hasta tener el form -->
+                <form *ngIf="citaForm" [formGroup]="citaForm" (ngSubmit)="guardarCita()">
+                  <ion-list inset="true">
+                    <ion-item>
+                      <ion-label position="stacked">Título</ion-label>
+                      <ion-input formControlName="titulo" clearInput></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Fecha</ion-label>
+                      <ion-datetime
+                        presentation="date"
+                        formControlName="fecha"
+                        locale="es-CL"
+                        class="ion-margin-top ion-margin-bottom"
+                        (ionChange)="citaForm.get('fecha')?.setValue($event.detail.value)">
+                      </ion-datetime>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Hora inicio</ion-label>
+                      <ion-input
+                        type="time"
+                        formControlName="horaInicio"
+                        (ionChange)="citaForm.get('horaInicio')?.setValue($event.detail.value)">
+                      </ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Hora fin</ion-label>
+                      <ion-input
+                        type="time"
+                        formControlName="horaFin"
+                        (ionChange)="citaForm.get('horaFin')?.setValue($event.detail.value)">
+                      </ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Lugar</ion-label>
+                      <ion-input formControlName="lugar" clearInput></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Notas</ion-label>
+                      <ion-textarea formControlName="notas" auto-grow="true"></ion-textarea>
+                    </ion-item>
+                  </ion-list>
+
+                  <ion-button type="submit" expand="block" color="danger">
+                    {{ editandoCitaId() ? 'Guardar cambios' : 'Crear cita' }}
+                  </ion-button>
+                </form>
+              </ion-content>
+            </ng-template>
+          </ion-modal>
+
+
+
+
+          <!-- VACUNAS -->
+          <ion-list *ngIf="section()==='vacunas'" inset="true">
+            <ion-item lines="full">
+              <ion-label>
+                <h3>Registro de Vacunas</h3>
+                <p class="ion-text-wrap">Añade vacunas aplicadas a esta mascota y notas relevantes.</p>
+              </ion-label>
+
+              <ion-button slot="end" color="danger" (click)="abrirNuevaVacuna()">
+                <ion-icon name="add-outline" slot="start"></ion-icon>
+                Nueva vacuna
+              </ion-button>
+            </ion-item>
+
+            <ng-container *ngIf="vacunas().length; else sinVacunas">
+              <ion-item *ngFor="let v of vacunas()">
+                <ion-label>
+                  <h3>{{ v.tipo }}</h3>
+                  <p>
+                    Aplicada: {{ v.fechaAplicacion | date:'dd-MM-yyyy' }}
+                    <span *ngIf="v.proximaFecha"> • Próx: {{ v.proximaFecha | date:'dd-MM-yyyy' }}</span>
+                  </p>
+                  <p *ngIf="v.notas" class="ion-text-wrap">{{ v.notas }}</p>
+                </ion-label>
+
+                <ion-button fill="outline" color="medium" (click)="abrirEditarVacuna(v)">
+                  <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+                <ion-button color="danger" (click)="borrarVacuna(v)">
+                  <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              </ion-item>
+            </ng-container>
+
+            <ng-template #sinVacunas>
+              <ion-item>
+                <ion-label color="medium">No hay vacunas registradas.</ion-label>
+              </ion-item>
+            </ng-template>
+          </ion-list>
+
+          <!-- MODAL crear/editar vacuna -->
+          <ion-modal
+            [isOpen]="vacunaModalOpen()"
+            (didDismiss)="vacunaModalOpen.set(false)"
+            [keepContentsMounted]="true">
+            <ng-template>
+              <ion-header>
+                <ion-toolbar>
+                  <ion-title>{{ editandoVacunaId() ? 'Editar vacuna' : 'Nueva vacuna' }}</ion-title>
+                  <ion-buttons slot="end">
+                    <ion-button (click)="vacunaModalOpen.set(false)">Cerrar</ion-button>
+                  </ion-buttons>
+                </ion-toolbar>
+              </ion-header>
+
+              <ion-content class="ion-padding">
+                <form *ngIf="vacunaForm" [formGroup]="vacunaForm" (ngSubmit)="guardarVacuna()">
+                  <ion-list inset="true">
+                    <ion-item>
+                      <ion-label position="stacked">Tipo de vacuna</ion-label>
+                      <ion-select formControlName="tipo" interface="popover" placeholder="Selecciona">
+                        <ion-select-option value="Antirrábica">Antirrábica</ion-select-option>
+                        <ion-select-option value="Óctuple / Puppy">Óctuple / Puppy</ion-select-option>
+                        <ion-select-option value="Triple felina">Triple felina</ion-select-option>
+                        <ion-select-option value="Bordetella">Bordetella</ion-select-option>
+                        <ion-select-option value="Otra">Otra</ion-select-option>
+                      </ion-select>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Fecha de aplicación</ion-label>
+                      <ion-datetime
+                        presentation="date"
+                        formControlName="fechaAplicacion"
+                        locale="es-CL"
+                        class="ion-margin-top ion-margin-bottom"
+                        (ionChange)="vacunaForm.get('fechaAplicacion')?.setValue($event.detail.value)">
+                      </ion-datetime>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Próxima dosis (opcional)</ion-label>
+                      <ion-datetime
+                        presentation="date"
+                        formControlName="proximaFecha"
+                        locale="es-CL"
+                        class="ion-margin-top ion-margin-bottom"
+                        (ionChange)="vacunaForm.get('proximaFecha')?.setValue($event.detail.value)">
+                      </ion-datetime>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Notas</ion-label>
+                      <ion-textarea formControlName="notas" auto-grow="true"></ion-textarea>
+                    </ion-item>
+                  </ion-list>
+
+                  <ion-button type="submit" expand="block" color="danger">
+                    {{ editandoVacunaId() ? 'Guardar cambios' : 'Registrar vacuna' }}
+                  </ion-button>
+                </form>
+              </ion-content>
+            </ng-template>
+          </ion-modal>
+
+          <!-- EXÁMENES -->
+          <ion-list *ngIf="section()==='examenes'" inset="true">
+            <ion-item lines="full">
+              <ion-label>
+                <h3>Exámenes</h3>
+                <p class="ion-text-wrap">Registra exámenes programados o realizados. Sube la <strong>orden</strong> y los <strong>resultados</strong>.</p>
+              </ion-label>
+              <ion-button slot="end" color="danger" (click)="abrirNuevoExamen()">
+                <ion-icon name="add-outline" slot="start"></ion-icon>
+                Nuevo examen
+              </ion-button>
+            </ion-item>
+
+            <ng-container *ngIf="examenes().length; else sinExamenes">
+              <ion-item *ngFor="let e of examenes()">
+                <ion-label>
+                  <h3>{{ e.tipo }}</h3>
+                  <p>
+                    <ng-container *ngIf="e.fechaProgramada">Programado: {{ e.fechaProgramada | date:'dd-MM-yyyy' }}</ng-container>
+                    <ng-container *ngIf="e.fechaRealizado"> • Realizado: {{ e.fechaRealizado | date:'dd-MM-yyyy' }}</ng-container>
+                  </p>
+                  <p *ngIf="e.lugar">Lugar: {{ e.lugar }}</p>
+                  <p *ngIf="e.costo != null">Costo: {{ e.costo | currency:'CLP':'symbol-narrow':'1.0-0' }}</p>
+                  <p *ngIf="e.notas" class="ion-text-wrap">{{ e.notas }}</p>
+
+                  <!-- Archivos -->
+                  <div class="ion-padding-top">
+                    <strong>Orden:</strong>
+                    <ng-container *ngIf="e.ordenUrl; else noOrden">
+                      <ion-button size="small" fill="clear" color="primary" (click)="openUrl(e.ordenUrl)">
+                        <ion-icon name="eye-outline" slot="start"></ion-icon>
+                        Ver orden
+                      </ion-button>
+
+                      <ion-button size="small" fill="clear" color="danger" (click)="quitarArchivo(e, 'orden')">
+                        <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+                        Quitar
+                      </ion-button>
+                    </ng-container>
+                    <ng-template #noOrden>
+                      <input type="file" accept="image/*,.pdf" hidden #ordenInput (change)="onUploadOrden($event, e)">
+                      <ion-button size="small" [disabled]="subiendoOrden()" (click)="ordenInput.click()" color="danger" class="ion-margin-start">
+                        <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+                        {{ subiendoOrden() ? 'Subiendo…' : 'Subir orden' }}
+                      </ion-button>
+                    </ng-template>
+                  </div>
+
+                  <div class="ion-padding-top">
+                    <strong>Resultado:</strong>
+                    <ng-container *ngIf="e.resultadoUrl; else noRes">
+                      <ion-button size="small" fill="clear" color="primary" (click)="openUrl(e.resultadoUrl)">
+                        <ion-icon name="eye-outline" slot="start"></ion-icon>
+                        Ver resultado
+                      </ion-button>
+
+                      <ion-button size="small" fill="clear" color="danger" (click)="quitarArchivo(e, 'resultado')">
+                        <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+                        Quitar
+                      </ion-button>
+                    </ng-container>
+                    <ng-template #noRes>
+                      <input type="file" accept="image/*,.pdf" hidden #resultadoInput (change)="onUploadResultado($event, e)">
+                      <ion-button size="small" [disabled]="subiendoResultado()" (click)="resultadoInput.click()" color="danger" class="ion-margin-start">
+                        <ion-icon name="cloud-upload-outline" slot="start"></ion-icon>
+                        {{ subiendoResultado() ? 'Subiendo…' : 'Subir resultado' }}
+                      </ion-button>
+                    </ng-template>
+                  </div>
+                </ion-label>
+
+                <!-- Estado -->
+                <ion-badge slot="end" [color]="e.realizado ? 'success' : 'warning'">
+                  {{ e.realizado ? 'Realizado' : 'Pendiente' }}
+                </ion-badge>
+
+                <!-- Toggle realizado -->
+                <ion-button fill="outline" color="medium" (click)="abrirEditarExamen(e)">
+                  <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+                <ion-button color="tertiary" (click)="toggleRealizado(e)">
+                  <ion-icon [name]="e.realizado ? 'checkmark-done-outline' : 'checkbox-outline'" slot="icon-only"></ion-icon>
+                </ion-button>
+                <ion-button color="danger" (click)="borrarExamen(e)">
+                  <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              </ion-item>
+            </ng-container>
+
+            <ng-template #sinExamenes>
+              <ion-item><ion-label color="medium">No hay exámenes registrados.</ion-label></ion-item>
+            </ng-template>
+          </ion-list>
+
+          <!-- MODAL crear/editar examen -->
+          <ion-modal
+            [isOpen]="examenModalOpen()"
+            (didDismiss)="examenModalOpen.set(false)"
+            [keepContentsMounted]="true">
+            <ng-template>
+              <ion-header>
+                <ion-toolbar>
+                  <ion-title>{{ editandoExamenId() ? 'Editar examen' : 'Nuevo examen' }}</ion-title>
+                  <ion-buttons slot="end">
+                    <ion-button (click)="examenModalOpen.set(false)">Cerrar</ion-button>
+                  </ion-buttons>
+                </ion-toolbar>
+              </ion-header>
+
+              <ion-content class="ion-padding">
+                <form *ngIf="examenForm" [formGroup]="examenForm" (ngSubmit)="guardarExamen()">
+                  <ion-list inset="true">
+                    <ion-item>
+                      <ion-label position="stacked">Tipo de examen</ion-label>
+                      <ion-input formControlName="tipo" clearInput></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Fecha programada (opcional)</ion-label>
+                      <ion-datetime
+                        presentation="date"
+                        formControlName="fechaProgramada"
+                        locale="es-CL"
+                        class="ion-margin-top ion-margin-bottom"
+                        (ionChange)="examenForm.get('fechaProgramada')?.setValue($event.detail.value)">
+                      </ion-datetime>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label>Realizado</ion-label>
+                      <ion-toggle formControlName="realizado"></ion-toggle>
+                    </ion-item>
+
+                    <ion-item *ngIf="examenForm.get('realizado')?.value">
+                      <ion-label position="stacked">Fecha realizado</ion-label>
+                      <ion-datetime
+                        presentation="date"
+                        formControlName="fechaRealizado"
+                        locale="es-CL"
+                        class="ion-margin-top ion-margin-bottom"
+                        (ionChange)="examenForm.get('fechaRealizado')?.setValue($event.detail.value)">
+                      </ion-datetime>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Lugar (opcional)</ion-label>
+                      <ion-input formControlName="lugar" clearInput></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Costo (opcional)</ion-label>
+                      <ion-input type="number" inputmode="decimal" formControlName="costo"></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Notas</ion-label>
+                      <ion-textarea formControlName="notas" auto-grow="true"></ion-textarea>
+                    </ion-item>
+                  </ion-list>
+
+                  <ion-button type="submit" expand="block" color="danger">
+                    {{ editandoExamenId() ? 'Guardar cambios' : 'Guardar examen' }}
+                  </ion-button>
+                </form>
+              </ion-content>
+            </ng-template>
+          </ion-modal>
+
+          <!-- MEDICAMENTOS -->
+          <ion-list *ngIf="section()==='medicamentos'" inset="true">
+            <ion-item lines="full">
+              <ion-label>
+                <h3>Medicamentos</h3>
+                <p class="ion-text-wrap">Administra los tratamientos: nombre, dosis (mg), fechas, costo y notas.</p>
+              </ion-label>
+              <ion-button slot="end" color="danger" (click)="abrirNuevoMedicamento()">
+                <ion-icon name="add-outline" slot="start"></ion-icon>
+                Nuevo medicamento
+              </ion-button>
+            </ion-item>
+
+            <ng-container *ngIf="medicamentos().length; else sinMedicamentos">
+              <ion-item *ngFor="let m of medicamentos()">
+                <ion-label>
+                  <h3>{{ m.nombre }} <ion-note color="medium">• {{ m.mg }} mg</ion-note></h3>
+
+                  <p>
+                    Inicio: {{ m.fechaInicio | date:'dd-MM-yyyy' }}
+                    <ng-container *ngIf="m.fechaFin"> • Fin: {{ m.fechaFin | date:'dd-MM-yyyy' }}</ng-container>
+                  </p>
+
+                  <p *ngIf="m.costo != null">Costo: {{ m.costo | currency:'CLP':'symbol-narrow':'1.0-0' }}</p>
+                  <p *ngIf="m.notas" class="ion-text-wrap">Notas: {{ m.notas }}</p>
+                </ion-label>
+
+                <!-- Badge de estado -->
+                <ion-badge slot="end" [color]="medColor(m)">
+                  {{ medEstado(m) }}
+                </ion-badge>
+
+                <ion-button fill="outline" color="medium" (click)="abrirEditarMedicamento(m)">
+                  <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+                <ion-button color="danger" (click)="borrarMedicamento(m)">
+                  <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                </ion-button>
+              </ion-item>
+            </ng-container>
+
+            <ng-template #sinMedicamentos>
+              <ion-item><ion-label color="medium">No hay medicamentos registrados.</ion-label></ion-item>
+            </ng-template>
+          </ion-list>
+
+          <!-- MODAL crear/editar medicamento -->
+          <ion-modal
+            [isOpen]="medicamentoModalOpen()"
+            (didDismiss)="medicamentoModalOpen.set(false)"
+            [keepContentsMounted]="true">
+            <ng-template>
+              <ion-header>
+                <ion-toolbar>
+                  <ion-title>{{ editandoMedicamentoId() ? 'Editar medicamento' : 'Nuevo medicamento' }}</ion-title>
+                  <ion-buttons slot="end">
+                    <ion-button (click)="medicamentoModalOpen.set(false)">Cerrar</ion-button>
+                  </ion-buttons>
+                </ion-toolbar>
+              </ion-header>
+
+              <ion-content class="ion-padding">
+                <form *ngIf="medicamentoForm" [formGroup]="medicamentoForm" (ngSubmit)="guardarMedicamento()">
+                  <ion-list inset="true">
+                    <ion-item>
+                      <ion-label position="stacked">Nombre</ion-label>
+                      <ion-input formControlName="nombre" clearInput></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Dosis (mg)</ion-label>
+                      <ion-input type="number" inputmode="decimal" formControlName="mg"></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Inicio del tratamiento</ion-label>
+                      <ion-datetime
+                        presentation="date"
+                        formControlName="fechaInicio"
+                        locale="es-CL"
+                        class="ion-margin-top ion-margin-bottom"
+                        (ionChange)="medicamentoForm.get('fechaInicio')?.setValue($event.detail.value)">
+                      </ion-datetime>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Fin del tratamiento (opcional)</ion-label>
+                      <ion-datetime
+                        presentation="date"
+                        formControlName="fechaFin"
+                        locale="es-CL"
+                        class="ion-margin-top ion-margin-bottom"
+                        (ionChange)="medicamentoForm.get('fechaFin')?.setValue($event.detail.value)">
+                      </ion-datetime>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Costo (opcional)</ion-label>
+                      <ion-input type="number" inputmode="decimal" formControlName="costo"></ion-input>
+                    </ion-item>
+
+                    <ion-item>
+                      <ion-label position="stacked">Notas de comportamiento (opcional)</ion-label>
+                      <ion-textarea formControlName="notas" auto-grow="true"></ion-textarea>
+                    </ion-item>
+                  </ion-list>
+
+                  <ion-button type="submit" expand="block" color="danger">
+                    {{ editandoMedicamentoId() ? 'Guardar cambios' : 'Guardar medicamento' }}
+                  </ion-button>
+                </form>
+              </ion-content>
+            </ng-template>
+          </ion-modal>
+
+
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-container>
+
+  <ng-template #skel>
+    <ion-list>
+      <ion-item>
+        <ion-avatar slot="start"></ion-avatar>
+        <ion-label><h3>Cargando...</h3></ion-label>
+      </ion-item>
+    </ion-list>
+  </ng-template>
+
+  <!-- Toast -->
+  <ion-toast
+    [isOpen]="toastOpen()"
+    [message]="toastMsg() || ''"
+    duration="1800"
+    (didDismiss)="toastOpen.set(false)">
+  </ion-toast>
+</ion-content>

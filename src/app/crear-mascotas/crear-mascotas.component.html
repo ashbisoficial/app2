@@ -1,0 +1,207 @@
+
+
+<ion-content [fullscreen]="true" class="page-add-mascota">
+  <ion-grid fixed>
+    <ion-row class="ion-justify-content-center">
+      <ion-col size="12" size-md="8" size-lg="6">
+
+        <!-- Imagen principal + botones -->
+        <ion-list class="list-md" lines="none">
+          <ion-item>
+            <ion-img
+              [src]="imagenPreview || 'assets/img/logo_ashbis.jpeg'"
+              class="preview-principal"
+              alt="Foto Mascota"
+            ></ion-img>
+          </ion-item>
+
+          <input #fileInput type="file" accept="image/*" (change)="onImageSelected($event)" hidden />
+          <input #filesInputMulti type="file" accept="image/*" multiple (change)="onImagesSelected($event)" hidden />
+
+          <div class="botones-imagenes">
+            <ion-button class="btn-base btn-foto" size="small" fill="outline" (click)="fileInput.click()">
+              <ion-icon name="camera-outline" slot="start"></ion-icon>
+              Foto principal
+            </ion-button>
+
+            <ion-button class="btn-base btn-galeria" size="small" fill="solid" (click)="filesInputMulti.click()">
+              <ion-icon name="images-outline" slot="start"></ion-icon>
+              Agregar a galería
+            </ion-button>
+          </div>
+        </ion-list>
+
+        <!-- Previews galería -->
+        <ion-list inset="true" *ngIf="galeriaPreviews.length">
+          <ion-item>
+            <ion-label>Galería ({{ galeriaPreviews.length }})</ion-label>
+          </ion-item>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="4" size-sm="3" size-md="2" *ngFor="let src of galeriaPreviews; let i = index">
+                <div class="preview-galeria-wrap">
+                  <ion-img [src]="src" class="preview-galeria"></ion-img>
+                  <ion-button class="btn-close" size="small" fill="clear" color="danger" (click)="removeFromGaleria(i)">
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-list>
+
+        <!-- FORMULARIO: envuelto para centrar inputs -->
+        <div class="form-container">
+          <form [formGroup]="mascotaForm" (ngSubmit)="guardarMascota()" novalidate>
+            <ion-list class="list" inset="true">
+
+              <!-- Nombre -->
+              <ion-item fill="solid" [class.is-invalid]="isInvalid('nombre')">
+                <ion-label position="stacked">Nombre <span class="req">*</span></ion-label>
+                <ion-input formControlName="nombre" placeholder="Nombre de la mascota" clearInput></ion-input>
+                <ion-note color="danger" *ngIf="isInvalid('nombre')">Requerido (mín. 2 caracteres).</ion-note>
+              </ion-item>
+
+              <!-- Número de chip (opcional) -->
+              <ion-item class="ion-margin-top" fill="solid" [class.is-invalid]="isInvalid('numeroChip')">
+                <ion-label position="stacked">Número de chip (opcional)</ion-label>
+                <ion-input type="text" formControlName="numeroChip" placeholder="15 dígitos" clearInput></ion-input>
+              </ion-item>
+
+              <!-- Edad -->
+              <ion-item class="ion-margin-top" fill="solid" [class.is-invalid]="isInvalid('edad')">
+                <ion-label position="stacked">Edad (años) <span class="req">*</span></ion-label>
+                <ion-input type="number" formControlName="edad" placeholder="Ej: 2" clearInput></ion-input>
+              </ion-item>
+
+              <!-- Sexo -->
+              <ion-item class="ion-margin-top" fill="solid" [class.is-invalid]="isInvalid('sexo')">
+                <ion-label position="stacked">Sexo <span class="req">*</span></ion-label>
+                <ion-select formControlName="sexo" placeholder="Selecciona sexo" interface="popover">
+                  <ion-select-option value="Macho">Macho</ion-select-option>
+                  <ion-select-option value="Hembra">Hembra</ion-select-option>
+                  <ion-select-option value="Otro">Otro</ion-select-option>
+                </ion-select>
+              </ion-item>
+
+              <!-- Fecha nacimiento -->
+              <ion-item class="ion-margin-top" fill="solid">
+                <ion-label position="stacked">Fecha de nacimiento</ion-label>
+                <ion-datetime-button datetime="picker-fecha" class="datetime-button"></ion-datetime-button>
+                <ion-modal [keepContentsMounted]="true">
+                  <ng-template>
+                    <ion-datetime id="picker-fecha" presentation="date"
+                      [max]="fechaActual" locale="es-ES" (ionChange)="onIonDateChange($event)">
+                    </ion-datetime>
+                  </ng-template>
+                </ion-modal>
+                <ion-note slot="end" color="medium" class="fecha-note">
+                  {{ fechaFormateada || 'Sin seleccionar' }}
+                </ion-note>
+              </ion-item>
+
+              <!-- Especie -->
+              <ion-item class="ion-margin-top" fill="solid" [class.is-invalid]="isInvalid('especie')">
+                <ion-label position="stacked">Especie <span class="req">*</span></ion-label>
+                <ion-select formControlName="especie" placeholder="Selecciona especie" interface="popover">
+                  <ion-select-option value="Perro">Perro</ion-select-option>
+                  <ion-select-option value="Gato">Gato</ion-select-option>
+                  <ion-select-option value="Otro">Otro</ion-select-option>
+                </ion-select>
+              </ion-item>
+
+              <!-- Tamaño -->
+              <ion-item class="ion-margin-top" fill="solid" [class.is-invalid]="isInvalid('tamano')">
+                <ion-label position="stacked">Tamaño <span class="req">*</span></ion-label>
+                <ion-select formControlName="tamano" placeholder="Seleccione tamaño" interface="popover">
+                  <ion-select-option value="Chico">Chico</ion-select-option>
+                  <ion-select-option value="Mediano">Mediano</ion-select-option>
+                  <ion-select-option value="Grande">Grande</ion-select-option>
+                </ion-select>
+              </ion-item>
+
+              <!-- Peso -->
+              <ion-item class="ion-margin-top" fill="solid" [class.is-invalid]="isInvalid('peso')">
+                <ion-label position="stacked">Peso (kg) <span class="req">*</span></ion-label>
+                <ion-input type="number" inputmode="decimal" formControlName="peso" placeholder="Ej: 10.5" clearInput></ion-input>
+              </ion-item>
+
+              <!-- Color -->
+              <ion-item class="ion-margin-top" fill="solid" [class.is-invalid]="isInvalid('color')">
+                <ion-label position="stacked">Color <span class="req">*</span></ion-label>
+                <ion-input formControlName="color" placeholder="Ej: Marrón" clearInput></ion-input>
+              </ion-item>
+
+              <!-- Raza -->
+              <ion-item class="ion-margin-top" fill="solid" [class.is-invalid]="isInvalid('raza')">
+                <ion-label position="stacked">Raza <span class="req">*</span></ion-label>
+                <ion-input formControlName="raza" placeholder="Ej: Labrador" clearInput></ion-input>
+              </ion-item>
+
+              <!-- Castrado -->
+              <ion-item class="ion-margin-top" fill="solid" [class.is-invalid]="isInvalid('castrado')">
+                <ion-label position="stacked">Castrado / Esterilizado <span class="req">*</span></ion-label>
+                <ion-select formControlName="castrado" placeholder="Selecciona opción" interface="popover">
+                  <ion-select-option value="Sí">Sí</ion-select-option>
+                  <ion-select-option value="No">No</ion-select-option>
+                  <ion-select-option value="Desconocido">Desconocido</ion-select-option>
+                </ion-select>
+              </ion-item>
+
+              <!-- Procedencia -->
+              <ion-item class="ion-margin-top" fill="solid" [class.is-invalid]="isInvalid('procedencia')">
+                <ion-label position="stacked">Procedencia <span class="req">*</span></ion-label>
+                <ion-select formControlName="procedencia" placeholder="Selecciona origen" interface="popover">
+                  <ion-select-option value="Adopcion">Adopción</ion-select-option>
+                  <ion-select-option value="Compra">Compra</ion-select-option>
+                  <ion-select-option value="Regalo">Regalo</ion-select-option>
+                  <ion-select-option value="Rescatado">Rescatado</ion-select-option>
+                </ion-select>
+              </ion-item>
+
+              <!-- Señas -->
+              <ion-item class="ion-margin-top" fill="solid" [class.is-invalid]="isInvalid('senas')">
+                <ion-label position="stacked">Señas particulares <span class="req">*</span></ion-label>
+                <ion-input formControlName="senas" placeholder="Descripción breve" clearInput></ion-input>
+              </ion-item>
+
+              <!-- Notas -->
+              <ion-item class="ion-margin-top" fill="solid">
+                <ion-label position="stacked">Notas (personalidad)</ion-label>
+                <ion-input formControlName="notas" placeholder="Ej: tranquilo"></ion-input>
+              </ion-item>
+
+              <!-- COMPORTAMIENTO EN ACORDEÓN -->
+              <ion-accordion-group expand="inset">
+                <ion-accordion value="comportamiento">
+                  <ion-item slot="header">
+                    <ion-label>Indicadores de comportamiento</ion-label>
+                  </ion-item>
+                  <div slot="content" class="comportamiento-grid">
+                    <ion-item lines="none" *ngFor="let opt of comportamientoOptions">
+                      <ion-label class="ion-text-wrap">{{ opt.label }}</ion-label>
+                      <ion-checkbox slot="end"
+                        [checked]="comportamientoSelected.includes(opt.value)"
+                        (ionChange)="toggleComportamiento(opt.value, $event)">
+                      </ion-checkbox>
+                    </ion-item>
+                  </div>
+                </ion-accordion>
+              </ion-accordion-group>
+
+            </ion-list>
+
+            <!-- Botón de Guardar -->
+            <ion-button type="submit" expand="block" shape="round"
+              class="btn-base btn-guardar ion-margin-top" [disabled]="cargando">
+              <ion-spinner *ngIf="cargando" name="crescent" slot="start"></ion-spinner>
+              {{ cargando ? 'Guardando...' : 'Guardar Mascota' }}
+            </ion-button>
+          </form>
+        </div>
+        <!-- /form-container -->
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

@@ -1,0 +1,216 @@
+/* ------------------------------ HEADER --------------------- */
+
+
+
+.header-menu {
+  --background: #000000;
+  border-bottom: 3px solid rojo #8b0808;
+  height: 70px;
+  position: relative;
+  padding: 0;
+  overflow: visible;
+}
+
+.logo-header {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 100px;
+  width: auto;
+  object-fit: contain;
+  z-index: 20;
+  pointer-events: none;
+  filter: drop-shadow(0 0 4px rgba(0,0,0,0.5));
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+@media (max-width: 768px) {
+  .header-menu { height: 64px; }
+  .logo-header { height: 52px; }
+}
+@media (max-width: 480px) {
+  .header-menu { height: 56px; }
+  .logo-header { height: 44px; }
+}
+
+/* ------------------------------ CARRUSEL ---------------------------------- */
+
+swiper-container {
+  width: 100%;
+  height: 220px;
+  display: block;
+  border-radius: 16px;
+  overflow: hidden;
+  background: transparent;
+  margin: 12px auto 24px auto;
+  box-shadow: 0 2px 8px rgb(0, 0, 0);
+}
+
+swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slide-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.slide-content img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+@media (max-width: 600px) { swiper-container { height: 200px; } }
+@media (max-width: 480px) { swiper-container { height: 180px; } }
+
+/* ------------------------------ MAPA LEAFLET -------------------------------- */
+
+.map-container {
+  width: 100%;
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+#leaflet-map {
+  width: 100%;
+  height: 380px;
+  border-radius: 16px;
+  z-index: 0;
+}
+
+@media (max-width: 768px) { #leaflet-map { height: 320px; } }
+@media (max-width: 540px) { #leaflet-map { height: 280px; } }
+@media (max-width: 420px) { #leaflet-map { height: 250px; } }
+
+/* Asegura que el mapa Leaflet no quede tapado por Ionic */
+.leaflet-container {
+  z-index: 0 !important;
+}
+
+/* ------------------------------ SPINNER -------------------------------- */
+
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 12px 0;
+  gap: 6px;
+  color: #8b0808;
+  font-size: 14px;
+}
+
+/* ----------------------- BOTONES  ---------------------------- */
+.btn-ashbis {
+  --background: #8b0808;
+  --background-hover: #b91c1c;
+  --background-activated: #991b1b;
+
+  --color: #ffffff;
+
+  --border-radius: 20px;
+  font-weight: 600;
+
+}
+
+.btn-ashbis-outline {
+  --background: transparent;
+  --color: #dc2626;
+  --border-color: #dc2626;
+  --border-width: 2px;
+  --border-style: solid;
+
+  font-weight: 600;
+  border-radius: 20px;
+}
+
+.chat-ia-button {
+  margin-bottom: 24px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.btn-big {
+  width: 160px;
+  height: 45px;
+  font-weight: 600;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-outline {
+  --border-color: #8b0808;
+  --border-width: 2px;
+  --border-style: solid;
+  --color: white;
+  --background: transparent;
+}
+
+ion-button[color="danger"] {
+  --background-activated: #ff3b30;
+  --border-radius: 20px;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(255, 59, 48, 0.3);
+}
+
+.map-title {
+  font-weight: 700;
+  font-size: 18px;
+  margin-top: 16px;
+}
+
+.texto-mapa {
+  color: #888;
+  font-size: 14px;
+  padding: 8px;
+}
+
+/* ============================
+   CARRUSEL INFERIOR
+============================ */
+
+.carrusel-inferior-wrapper {
+  width: 100%;
+  margin-top: 16px;
+  margin-bottom: 18px;
+}
+
+.carrusel-inferior-wrapper swiper-container {
+  width: 100%;
+  height: 120px;
+  display: block;
+  border-radius: 12px;
+  overflow: visible;
+}
+
+.slide-content-inferior {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide-content-inferior img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}

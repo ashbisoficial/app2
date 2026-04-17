@@ -1,0 +1,85 @@
+<ion-header translucent="true">
+  <ion-toolbar>
+    <!-- Back button -->
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home"></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>Mis Mascotas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Loading -->
+  <ion-list *ngIf="loading(); else loaded">
+    <ion-item *ngFor="let i of [1,2,3]" class="pet-card">
+      <ion-avatar slot="start">
+        <ion-skeleton-text animated style="width:50px;height:50px;"></ion-skeleton-text>
+      </ion-avatar>
+      <ion-label>
+        <h3><ion-skeleton-text animated style="width:60%"></ion-skeleton-text></h3>
+        <p><ion-skeleton-text animated style="width:40%"></ion-skeleton-text></p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <!-- Data -->
+  <ng-template #loaded>
+    <ng-container *ngIf="mascotas().length > 0; else empty">
+      <ion-list>
+        <ion-item *ngFor="let m of mascotas(); trackBy: trackById" class="pet-card">
+
+          <!-- FOTO -->
+          <ion-avatar slot="start" class="pet-avatar">
+            <img [src]="m.fotoUrl || 'assets/img/logo_ashbis.jpeg'" alt="foto" />
+          </ion-avatar>
+
+          <!-- TEXTO -->
+          <ion-label class="pet-info">
+            <h2>{{ m.nombre }}</h2>
+            <p>{{ m.especie }} • {{ m.raza || '—' }}</p>
+          </ion-label>
+
+          <!-- BOTONES PERSONALIZADOS -->
+          <div class="pet-actions" (click)="$event.stopPropagation()">
+
+            <button class="btn btn-outline" (click)="verQrMascota(m, $event)">
+              QR
+            </button>
+
+            <button class="btn btn-outline" (click)="goPerfil(m, $event)">
+              Ver Perfil
+            </button>
+
+            <button class="btn btn-red" (click)="goEditar(m)">
+              Ficha Completa
+            </button>
+
+          </div>
+
+        </ion-item>
+      </ion-list>
+    </ng-container>
+
+    <ng-template #empty>
+      <ion-item lines="none">
+        <ion-label class="ion-text-center">
+          <h2>Sin mascotas registradas</h2>
+          <p>Usa “Agregar Mascota” para crear tu primera ficha.</p>
+        </ion-label>
+      </ion-item>
+    </ng-template>
+  </ng-template>
+
+  <!-- FAB -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button color="danger" [routerLink]="['/tabs/crear-mascotas']">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>

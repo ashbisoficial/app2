@@ -1,0 +1,92 @@
+<ion-header translucent="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/listar-mascotas"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ng-container *ngIf="!loading(); else skeleton">
+    <ion-grid fixed *ngIf="mascota() as m">
+      <ion-row class="ion-justify-content-center ion-padding-top">
+        <ion-col size="12" sizeMd="8" sizeLg="6" class="ion-text-center">
+          <ion-avatar class="avatar-xl">
+            <img [src]="avatar" alt="avatar mascota">
+          </ion-avatar>
+
+          <h2 class="nombre">{{ m.nombre }}</h2>
+
+          <ion-grid class="datos-grid">
+            <ion-row>
+              <ion-col size="6" class="ion-text-start">
+                <div class="dato">
+                  <div class="dato-tit">Edad</div>
+                  <div class="dato-val">{{ m.edad ?? '—' }}</div>
+                </div>
+              </ion-col>
+              <ion-col size="6" class="ion-text-end">
+                <div class="dato">
+                  <div class="dato-tit">Sexo</div>
+                  <div class="dato-val">{{ m.sexo || '—' }}</div>
+                </div>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="6" class="ion-text-start">
+                <div class="dato">
+                  <div class="dato-tit">Descripción</div>
+                  <div class="dato-val">{{ m.color || '—' }}</div>
+                </div>
+              </ion-col>
+              <ion-col size="6" class="ion-text-end">
+                <div class="dato">
+                  <div class="dato-tit">Raza</div>
+                  <div class="dato-val">{{ m.raza || '—' }}</div>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <div class="acciones">
+            <ion-button fill="outline" color="medium" (click)="editarPerfil()">Editar perfil</ion-button>
+            <ion-button fill="outline" color="medium" (click)="verHistorial()">Historial</ion-button>
+            <ion-button color="danger" (click)="verQR()">QR</ion-button>
+          </div>
+
+          <!-- Galería -->
+          <ion-list lines="none" *ngIf="m.galeria?.length">
+            <ion-grid>
+              <ion-row>
+                <ion-col size="6" sizeMd="4" *ngFor="let url of m.galeria">
+                  <div class="foto-wrap">
+                    <img [src]="url" alt="foto" class="foto"/>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-list>
+
+          <!-- Sin galería -->
+          <ion-item lines="none" *ngIf="!m.galeria?.length">
+            <ion-label class="ion-text-center">Sin fotos en galería</ion-label>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ng-container>
+
+  <ng-template #skeleton>
+    <ion-list>
+      <ion-item>
+        <ion-avatar slot="start"><ion-skeleton-text animated></ion-skeleton-text></ion-avatar>
+        <ion-label>
+          <h3><ion-skeleton-text animated style="width:60%"></ion-skeleton-text></h3>
+          <p><ion-skeleton-text animated style="width:40%"></ion-skeleton-text></p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ng-template>
+</ion-content>
+

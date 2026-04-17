@@ -1,0 +1,104 @@
+<ion-header translucent="false">
+  <ion-toolbar class="header-menu">
+    <img src="assets/img/ashbis.png" alt="Logo Ashbis" class="logo-header">
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+
+  <!-- CARRUSEL SUPERIOR -->
+  <div class="carrusel-container">
+    <swiper-container
+      slides-per-view="1"
+      pagination="true"
+      autoplay-delay="3500"
+      autoplay-disable-on-interaction="false"
+      loop="true"
+    >
+      <swiper-slide *ngFor="let img of imagenesCarrusel">
+        <div class="slide-content">
+          <img [src]="img.src" [alt]="img.titulo" />
+        </div>
+      </swiper-slide>
+    </swiper-container>
+  </div>
+
+  <!-- BOTÓN CHAT IA -->
+  <div class="ion-text-center ion-margin-top chat-ia-button">
+    <ion-button class="btn-ashbis" expand="block" shape="round" (click)="irAlChatIA()">
+      <ion-icon name="chatbubbles-outline" slot="start"></ion-icon>
+      Chat con Ashbis IA
+    </ion-button>
+  </div>
+
+  <!-- SECCIÓN MAPA -->
+  <ion-card class="map-card-container ion-no-margin">
+    <h2 class="map-title ion-text-center">Lugares para Mascotas</h2>
+
+    <!-- Mensaje cuando no hay resultados -->
+    <p *ngIf="!estaCargando && marcadoresEnMapa.length === 0"
+       class="ion-text-center ion-margin-top texto-mapa">
+      {{
+        userPositionMarker
+          ? 'No se encontraron lugares en 5 km.'
+          : 'Haz clic en un botón para buscar lugares cercanos.'
+      }}
+    </p>
+
+    <!-- BOTONES BÚSQUEDA -->
+    <div class="button-row">
+      <ion-button
+        class="btn-ashbis btn-big"
+        (click)="findPlacesAction('veterinary_care')"
+        [disabled]="estaCargando"
+        shape="round"
+        fill="solid"
+      >
+        <ion-icon name="locate-outline" slot="start"></ion-icon>
+        Veterinaria
+      </ion-button>
+
+      <ion-button
+        class="btn-big btn-outline"
+        (click)="findPlacesAction('pet_store')"
+        [disabled]="estaCargando"
+        shape="round"
+        fill="outline"
+      >
+        <ion-icon name="bag-outline" slot="start"></ion-icon>
+        Tienda
+      </ion-button>
+    </div>
+
+    <!-- SPINNER -->
+    <div *ngIf="estaCargando" class="spinner-container">
+      <ion-spinner name="dots" color="danger"></ion-spinner>
+      <p>Buscando lugares cercanos...</p>
+    </div>
+
+    <!-- MAPA LEAFLET -->
+    <ion-card-content>
+      <div class="map-container">
+        <div id="leaflet-map"></div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- CARRUSEL INFERIOR -->
+  <div class="carrusel-inferior-wrapper">
+    <swiper-container
+      slides-per-view="2.2"
+      space-between="12"
+      loop="true"
+      autoplay-delay="3000"
+      autoplay-disable-on-interaction="false"
+    >
+      <swiper-slide *ngFor="let img of imagenesCarruselInferior">
+        <div class="slide-content-inferior">
+          <img [src]="img.src" [alt]="img.titulo || 'slide'" />
+        </div>
+      </swiper-slide>
+    </swiper-container>
+  </div>
+
+</ion-content>

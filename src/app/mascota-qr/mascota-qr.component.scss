@@ -1,0 +1,198 @@
+/* ============================================
+   ESTILO GENERAL
+============================================ */
+ion-content {
+  --background: #070707;
+  color: #fff;
+  padding-bottom: 30px;
+}
+
+.header {
+  --background: #000;
+  --color: #fff;
+  border-bottom: 1px solid #222;
+}
+
+/* Fade-in suave */
+.fade-in {
+  animation: fadeIn .5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   SELECTOR DE MASCOTA
+============================================ */
+.mascota-selector {
+  background: #111;
+  border-radius: 16px;
+  padding: 12px;
+  margin-top: 10px;
+
+  ion-avatar img {
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  ion-label {
+    color: #cfcfcf;
+  }
+
+  ion-select {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+  }
+}
+
+/* ============================================
+   TARJETA QR
+============================================ */
+.qr-card {
+  background: #0d0d0d;
+  border-radius: 20px;
+  padding-top: 10px;
+  box-shadow: 0 0 18px rgba(255,255,255,0.05);
+}
+
+.titulo-qr {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.qr-content {
+  margin-top: 10px;
+
+  .qr-code-wrapper {
+    background: #fff;
+    padding: 14px;
+    border-radius: 14px;
+    display: inline-block;
+  }
+
+  .instruccion {
+    font-size: 0.9rem;
+    color: #b5b5b5;
+    margin-top: 10px;
+  }
+}
+
+/* ============================================
+   BOTONES
+============================================ */
+.acciones {
+  ion-button {
+    --border-radius: 14px;
+    border-color: #810000;
+    --color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* ============================================
+   BOTÓN COMPARTIR – BORDE ROJO
+============================================ */
+.acciones ion-button.compartir-btn {
+  --background: transparent !important;
+  --border-style: solid !important;
+  --border-width: 2px !important;
+  --border-radius: 14px !important;
+  --border-color: #ff3b3b !important; /* rojo */
+  --color: #ffffff !important;
+  font-weight: 600;
+}
+
+
+/* ============================================
+   TARJETA: FALTAN DATOS
+============================================ */
+ion-card[color="danger"] {
+  background: #310000;
+  color: #fff;
+
+  p {
+    font-size: 0.95rem;
+  }
+
+  ion-button {
+    --background: #fff;
+    --color: #000;
+    --border-radius: 14px;
+  }
+}
+
+/* ============================================
+   TARJETA: SIN MASCOTAS
+============================================ */
+ion-card[color="warning"] {
+  background: #2e2600;
+  color: #fff;
+
+  ion-card-title {
+    color: #f5d76e;
+  }
+
+  ion-button {
+    --border-color: #f5d76e;
+    --color: #f5d76e;
+    --border-radius: 14px;
+  }
+}
+
+/* ============================================
+   SELECTOR DE MASCOTA – FONDO NEGRO + BORDE ROJO ABAJO
+============================================ */
+.mascota-selector {
+  --background: transparent !important;
+  background: transparent !important;
+  padding: 8px 0 12px 0; /* espacio interno */
+  border-bottom: 2px solid #ff3b3b !important; /* solo borde abajo */
+  border-radius: 0 !important; /* sin bordes redondeados */
+  box-shadow: none !important;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* Avatar */
+.mascota-selector ion-avatar img {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Label */
+.rojo-label {
+  color: #ffffff !important;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+/* Select transparente/negro */
+.select-rojo {
+  --background: transparent !important;  /* evita gris */
+  background: transparent !important;     /* fuerza */
+  color: #ffffff !important;
+  font-weight: 600;
+  padding-left: 4px;
+
+  /* Quita el relleno gris interno */
+  --placeholder-color: #bbbbbb !important;
+  --highlight-height: 0; /* evita underline doble */
+}
+
+/* Ícono de la flecha del select */
+.select-rojo::part(icon) {
+  color: #820000 !important;
+  font-size: 20px;
+}
+
+/* El popover del select también negro */
+ion-popover .popover-content {
+  background: #000 !important;
+}

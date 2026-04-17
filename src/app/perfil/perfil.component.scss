@@ -1,0 +1,166 @@
+/* ====== FONDO GENERAL ====== */
+ion-content.perfil {
+  --background: #070707 !important;
+  color: #ffffff !important;
+}
+
+/* ====== CONTENEDOR GENERAL ====== */
+.container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto; /* CENTRADO HORIZONTAL */
+  padding: 20px;
+}
+
+/* ====== SIDEBAR – FOTO ====== */
+.sidebar {
+  display: flex;
+  justify-content: center;
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+}
+
+.photo-card {
+  --background: #070707 !important;
+  padding: 10px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 190px;
+  height: 190px;
+  margin: 0 auto; /* SIEMPRE CENTRADO */
+}
+
+/* ====== FOTO PERFIL ====== */
+.logo {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+
+  border: 5px solid #8b0808;
+  background: #111;
+  transition: 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 12px rgba(139, 8, 8, 0.4);
+}
+
+/* ====== PANEL DE FORMULARIO ====== */
+.panel {
+  background: transparent;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* ====== CAMPOS ====== */
+ion-item {
+  --background: transparent;
+  --color: #ffffff;
+  --inner-padding-end: 0;
+  --inner-padding-start: 0;
+  --highlight-color-focused: transparent;
+  border-bottom: none !important;
+}
+
+ion-label {
+  color: #ffffff !important;
+  font-size: 15px;
+  margin-bottom: 6px !important;
+}
+
+ion-input {
+  color: #ffffff !important;
+  border-bottom: 3px solid #8b0808 !important;
+  padding-bottom: 6px;
+}
+
+ion-input::part(input) {
+  color: #bbbbbb !important;
+}
+
+/* ====== BOTONES ====== */
+ion-button[color="danger"] {
+  --background: #8b0808 !important;
+}
+
+ion-button[color="medium"] {
+  --color: #ffffff !important;
+  --border-color: #8b0808 !important;
+  --border-width: 2px;
+  --background: transparent !important;
+}
+
+/* ====== BOTÓN CERRAR SESIÓN ====== */
+.btn-cerrar {
+  --background: transparent;
+  --color: #ffffff;
+  --border-color: #8b0808;
+  --border-width: 2px;
+  --border-style: solid;
+
+  width: 160px;
+  margin: 25px auto; /* CENTRADO */
+  display: block;
+  border-radius: 10px;
+
+  transition: 0.25s ease;
+}
+
+.btn-cerrar:hover {
+  --background: #8b080860;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (min-width: 768px) {
+  .container {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 30px;
+    align-items: start;
+  }
+
+  .sidebar {
+    margin: 0;
+    justify-content: center;
+  }
+
+  .panel {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .container {
+    display: block;
+  }
+
+  .panel {
+    margin-top: 15px;
+  }
+}
+
+/* =========================================
+   ELIMINAR LÍNEA GRIS DE ion-item DEFINITIVAMENTE
+   ========================================= */
+ion-item {
+  --background: transparent !important;
+  --border-color: transparent !important;
+  --border-style: none !important;
+  --inner-border-width: 0 !important;
+  --highlight-height: 0 !important;
+}
+
+ion-item::part(native) {
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+ion-item::after {
+  display: none !important;
+  border-bottom: none !important;
+}

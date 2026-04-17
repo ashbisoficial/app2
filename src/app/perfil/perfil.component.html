@@ -1,0 +1,88 @@
+<ion-content [fullscreen]="true" class="perfil">
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <ion-card class="photo-card">
+        <img class="logo" [src]="user_profile?.foto || defaultPhoto" alt="Foto" />
+      </ion-card>
+    </aside>
+
+    <!-- Panel de datos -->
+    <section class="panel">
+      <ion-skeleton-text *ngIf="cargando" [animated]="true" style="height: 300px;"></ion-skeleton-text>
+
+      <form *ngIf="!cargando && user_profile" class="form" [formGroup]="profileForm">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="12" sizeMd="6">
+              <ion-item>
+                <ion-label position="stacked">Nombre</ion-label>
+                <ion-input formControlName="nombre" [readonly]="!editMode"></ion-input>
+              </ion-item>
+            </ion-col>
+
+            <ion-col size="12" sizeMd="6">
+              <ion-item>
+                <ion-label position="stacked">Apellidos</ion-label>
+                <ion-input formControlName="apellido" [readonly]="!editMode"></ion-input>
+              </ion-item>
+            </ion-col>
+
+            <ion-col size="12" sizeMd="6">
+              <ion-item>
+                <ion-label position="stacked">Email</ion-label>
+                <!-- Sólo lectura (proviene del Auth normalmente) -->
+                <ion-input formControlName="email" readonly></ion-input>
+              </ion-item>
+            </ion-col>
+
+            <ion-col size="12" sizeMd="6">
+              <ion-item>
+                <ion-label position="stacked">Teléfono</ion-label>
+                <ion-input formControlName="telefono" [readonly]="!editMode" inputmode="tel"></ion-input>
+              </ion-item>
+            </ion-col>
+
+            <ion-col size="12" sizeMd="6">
+              <ion-item>
+                <ion-label position="stacked">Región</ion-label>
+                <ion-input formControlName="region" [readonly]="!editMode"></ion-input>
+              </ion-item>
+            </ion-col>
+
+            <ion-col size="12" sizeMd="6">
+              <ion-item>
+                <ion-label position="stacked">Dirección</ion-label>
+                <ion-input formControlName="direccion" [readonly]="!editMode"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="actions" style="margin-top: 16px;">
+            <ion-col size="12" class="ion-text-right">
+              <ion-button *ngIf="!editMode" (click)="habilitarEdicion()" fill="solid" color="danger">
+                Editar
+              </ion-button>
+
+              <ion-button *ngIf="editMode" color="medium" (click)="cancelarEdicion()" fill="outline" class="ion-margin-end">
+                Cancelar
+              </ion-button>
+
+              <ion-button *ngIf="editMode" color="primary" (click)="guardar()" [disabled]="profileForm.invalid" color="danger">
+                Guardar
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </form>
+    </section>
+     <!-- 🚪 Botón de Cerrar Sesión -->
+      <ion-button class="btn-cerrar"
+        expand="block"
+        (click)="logout()"
+      >
+        Cerrar Sesión
+      </ion-button>
+
+  </div>
+</ion-content>

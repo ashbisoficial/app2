@@ -1,0 +1,163 @@
+/* ====== FONDO GENERAL ====== */
+ion-content {
+  --background: #070707 !important;
+  color: #ffffff !important;
+}
+
+/* Forzar fondo negro dentro de estructuras internas */
+ion-content::part(scroll),
+ion-content .inner-scroll,
+ion-content .scroll-y,
+ion-content .ion-content-scroll-host {
+  background: #070707 !important;
+}
+
+.list{
+  background: #070707 !important;
+}
+/* Fondo negro dentro del ion-card */
+ion-card,
+ion-card::part(native) {
+  background: #070707 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* ====== INPUTS Y LABELS ====== */
+ion-item {
+  --background:transparent !important;
+  --color: #ffffff !important;
+  --highlight-color-focused: #d30000 !important;
+  --highlight-color-valid: #d30000 !important;
+  --highlight-color-invalid: #d30000 !important;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Borde rojo inferior */
+ion-item::part(native) {
+  border-bottom: 2px solid #d30000 !important;
+  width: 100%;
+  margin: 12px auto;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+/* Labels */
+ion-label {
+  background: #070707 !important;
+  color: #ffffff !important;
+  font-size: 14px;
+}
+
+/* Texto inputs */
+ion-input,
+ion-select {
+  background:transparent !important;
+  color: #ffffff !important;
+}
+
+/* Placeholder */
+ion-input::part(input),
+ion-select::part(text) {
+  color: #bbbbbb !important;
+}
+
+/* Asteriscos */
+.required {
+  color: #ff0000;
+}
+
+/* ====== MENSAJES DE ERROR ====== */
+ion-note[color="danger"] {
+  background: #070707 !important;
+  color: #d50d0d !important;
+  display: block;
+  width: 100%;
+  margin: 4px auto 0 auto;
+  text-align: left;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+/* Texto ayuda contraseña */
+.contrasena {
+  background: #070707 !important;
+  font-size: 11px;
+  color: #d9d9d9;
+  width: 80%;
+  margin: 4px auto 6px auto;
+  display: block;
+  text-align: left;
+}
+
+/* ====== BARRA FUERZA CONTRASEÑA ====== */
+.pw-meter {
+  width: 100%;
+  height: 6px;
+  background: #070707 !important;
+  border-radius: 3px;
+  margin: 6px auto;
+}
+
+.pw-meter-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #ffffff, #ff5b5b, #ff0000);
+  transition: width 0.3s ease;
+}
+
+.pw-strength-text {
+  background: #070707 !important;
+  font-size: 12px;
+  color: #bbbbbb;
+  width: 80%;
+  margin: 0 auto 6px auto;
+  text-align: left;
+}
+
+/* ====== ICÓNOS OJO (blancos) ====== */
+ion-button[slot="end"] {
+  --background: transparent !important;
+  --color: #ffffff !important;
+  --ripple-color: transparent !important;
+}
+
+ion-button[slot="end"] ion-icon {
+  color: #ffffff !important;
+  font-size: 22px;
+}
+
+.button-inner{
+  color: #ffffff;
+
+}
+
+/* ====== BOTONES ====== */
+ion-button[color="danger"] {
+  --background: #d30000;
+  --background-hover: #b80000;
+  --border-radius: 30px !important;
+  height: 45px;
+  font-weight: bold;
+  width: 90%;
+  margin: 20px auto 0 auto;
+}
+
+ion-button[color="medium"] {
+  --background: #d30000;
+  --color: #ffffff;
+  --border-radius: 30px !important;
+  height: 45px;
+  font-weight: bold;
+  width: 90%;
+  margin: 15px auto;
+}
+
+/* Link inferior */
+ion-button[fill="clear"] {
+  --color: #bbbbbb !important;
+  margin-top: 20px;
+  font-size: 12px;
+  text-transform: none;
+}
