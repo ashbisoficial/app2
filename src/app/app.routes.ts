@@ -64,7 +64,15 @@ export const routes: Routes = [
   },
   {
     path: 'chat-ia',
-    loadComponent: () => import('./chat-ia/chat-ia.component').then(m => m.ChatIaComponent)
+    loadComponent: () => 
+      import('./chat-ia/chat-ia.component')
+    .then(m => m.ChatIaComponent)
+  },
+  {
+    path: 'carnet/:id',
+    loadComponent: () => 
+      import('./carnet-mascota/carnet-mascota.page')
+      .then(m => m.CarnetMascotaPage)
   },
   {
     path: '',
@@ -75,5 +83,9 @@ export const routes: Routes = [
   {
     path: '**',
     redirectTo: 'login',
+  },
+  {
+    path: 'carnet-mascota',
+    loadComponent: () => import('./carnet-mascota/carnet-mascota.page').then( m => m.CarnetMascotaPage)
   }
 ];

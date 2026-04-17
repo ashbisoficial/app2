@@ -1,0 +1,75 @@
+.wallet-bg {
+  --background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wallet-card {
+  width: 95%;
+  max-width: 420px;
+  background: linear-gradient(135deg, #0a0a0a, #111);
+  border-radius: 24px;
+  padding: 20px;
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* HEADER */
+.wallet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    margin: 0;
+    font-size: 1.4rem;
+  }
+
+  p {
+    color: #aaa;
+    font-size: 0.9rem;
+  }
+
+  img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+
+/* BODY */
+.wallet-body {
+  margin-top: 15px;
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #222;
+  }
+}
+
+/* OWNER */
+.wallet-owner {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+/* QR */
+.wallet-qr {
+  margin-top: 20px;
+  text-align: center;
+  background: #fff;
+  padding: 10px;
+  border-radius: 16px;
+}
+
+.scan-text {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 8px;
+}

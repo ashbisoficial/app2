@@ -196,3 +196,15 @@ ion-card[color="warning"] {
 ion-popover .popover-content {
   background: #000 !important;
 }
+
+/* SWITCH QR */
+.qr-switch {
+  ion-segment-button {
+    --background: #111;
+    --color: #aaa;
+    --color-checked: #fff;
+    --indicator-color: #8b0808;
+    font-weight: 600;
+    border-radius: 12px;
+  }
+}

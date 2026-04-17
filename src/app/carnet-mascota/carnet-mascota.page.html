@@ -1,0 +1,53 @@
+<ion-content class="wallet-bg">
+
+  <div class="wallet-card">
+
+    <!-- Header -->
+    <div class="wallet-header">
+      <div>
+        <h2>{{ mascota?.nombre }}</h2>
+        <p>{{ mascota?.especie }} • {{ mascota?.raza }}</p>
+      </div>
+
+      <img [src]="mascota?.fotoUrl || 'assets/img/logo_ashbis.jpeg'" />
+    </div>
+
+    <!-- Info -->
+    <div class="wallet-body">
+      <div class="row">
+        <span>Edad</span>
+        <strong>{{ mascota?.edad }} años</strong>
+      </div>
+
+      <div class="row">
+        <span>Sexo</span>
+        <strong>{{ mascota?.sexo }}</strong>
+      </div>
+
+      <div class="row">
+        <span>Peso</span>
+        <strong>{{ mascota?.peso }} kg</strong>
+      </div>
+
+      <div class="row">
+        <span>Chip</span>
+        <strong>{{ mascota?.numeroChip || 'No registrado' }}</strong>
+      </div>
+    </div>
+
+    <!-- Dueño -->
+    <div class="wallet-owner">
+      <p>👤 {{ dueno?.nombre }} {{ dueno?.apellido }}</p>
+      <p>📞 {{ dueno?.telefono }}</p>
+    </div>
+
+    <!-- QR -->
+    <div class="wallet-qr">
+      <qrcode [qrdata]="qrSeguro" [width]="180"></qrcode>
+    </div>
+
+    <p class="scan-text">Escanea para ver ficha completa</p>
+
+  </div>
+
+</ion-content>
