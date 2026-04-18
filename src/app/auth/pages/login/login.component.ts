@@ -177,7 +177,11 @@ export class LoginComponent implements OnInit, OnDestroy {
         //  Actualizar datos (IMPORTANTE)
         await this.firestoreService.updateDocument(
           `usuarios/${user.uid}`,
-          datosUser
+           {
+            nombre,
+            apellido,
+            foto: user.photoURL || ''
+          }
         );
       }
 
