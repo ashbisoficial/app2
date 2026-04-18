@@ -35,7 +35,6 @@
   <ion-card class="map-card-container ion-no-margin">
     <h2 class="map-title ion-text-center">Lugares para Mascotas</h2>
 
-    <!-- Mensaje cuando no hay resultados -->
     <p *ngIf="!estaCargando && marcadoresEnMapa.length === 0"
        class="ion-text-center ion-margin-top texto-mapa">
       {{
@@ -45,26 +44,34 @@
       }}
     </p>
 
+    <!-- Leyenda de colores -->
+    <div *ngIf="marcadoresEnMapa.length > 0" class="leyenda-mapa">
+      <span class="leyenda-item">
+        <span class="dot dot-abierto"></span> Abierto
+      </span>
+      <span class="leyenda-item">
+        <span class="dot dot-cerrado"></span> Cerrado
+      </span>
+      <span class="leyenda-item">
+        <span class="dot dot-desconocido"></span> Sin horario
+      </span>
+    </div>
+
     <!-- BOTONES BÚSQUEDA -->
     <div class="button-row">
       <ion-button
         class="btn-ashbis btn-big"
         (click)="findPlacesAction('veterinary_care')"
         [disabled]="estaCargando"
-        shape="round"
-        fill="solid"
-      >
+        shape="round" fill="solid">
         <ion-icon name="locate-outline" slot="start"></ion-icon>
         Veterinaria
       </ion-button>
-
       <ion-button
         class="btn-big btn-outline"
         (click)="findPlacesAction('pet_store')"
         [disabled]="estaCargando"
-        shape="round"
-        fill="outline"
-      >
+        shape="round" fill="outline">
         <ion-icon name="bag-outline" slot="start"></ion-icon>
         Tienda
       </ion-button>
@@ -82,6 +89,100 @@
         <div id="leaflet-map"></div>
       </div>
     </ion-card-content>
+
+    <!-- PANEL DE INFORMACIÓN -->
+    <div *ngIf="mostrarPanel && marcadorSeleccionado" id="panel-info" class="panel-info">
+      <div class="panel-header">
+        <div class="panel-header-left">
+          <span class="panel-tipo-badge" [attr.data-tipo]="marcadorSeleccionado.tipo">
+            {{ marcadorSeleccionado.tipo === 'veterinary_care' ? 'Veterinaria' : 'Tienda' }}
+          </span>
+          <span class="estado-badge" [attr.data-estado]="getEstadoColor(marcadorSeleccionado)">
+            {{ getEstadoLabel(marcadorSeleccionado) }}
+          </span>
+        </div>
+        <ion-button fill="clear" size="small" (click)="cerrarPanel()">
+          <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+
+      <h3 class="panel-nombre">{{ marcadorSeleccionado.title }}</h3>
+      <p class="panel-direccion">{{ marcadorSeleccionado.address }}</p>
+
+      <!-- INFO PÚBLICA -->
+      <div class="panel-info-grid" *ngIf="!modoEdicion">
+        <div class="info-row" *ngIf="marcadorSeleccionado.userInfo?.phone || marcadorSeleccionado.phone">
+          <ion-icon name="call-outline"></ion-icon>
+          <span>{{ marcadorSeleccionado.userInfo?.phone || marcadorSeleccionado.phone }}</span>
+        </div>
+        <div class="info-row" *ngIf="marcadorSeleccionado.userInfo?.website || marcadorSeleccionado.website">
+          <ion-icon name="globe-outline"></ion-icon>
+          <a [href]="marcadorSeleccionado.userInfo?.website || marcadorSeleccionado.website" target="_blank">
+            Ver sitio web
+          </a>
+        </div>
+        <div class="info-row" *ngIf="marcadorSeleccionado.userInfo?.openingHours || marcadorSeleccionado.openingHours">
+          <ion-icon name="time-outline"></ion-icon>
+          <span>{{ marcadorSeleccionado.userInfo?.openingHours || marcadorSeleccionado.openingHours }}</span>
+        </div>
+        <div class="info-row" *ngIf="marcadorSeleccionado.userInfo?.descripcion">
+          <ion-icon name="paw-outline"></ion-icon>
+          <span>{{ marcadorSeleccionado.userInfo?.descripcion }}</span>
+        </div>
+        <p *ngIf="!marcadorSeleccionado.phone && !marcadorSeleccionado.website && !marcadorSeleccionado.openingHours && !marcadorSeleccionado.userInfo"
+           class="sin-info-texto">
+          No hay información disponible aún.<br>¿La conoces? ¡Agrégala!
+        </p>
+      </div>
+
+      <!-- FORMULARIO EDICIÓN -->
+      <div class="panel-edit-form" *ngIf="modoEdicion">
+        <ion-item class="edit-item">
+          <ion-label position="stacked">Teléfono</ion-label>
+          <ion-input [(ngModel)]="editForm.phone" placeholder="+56 9 1234 5678" type="tel"></ion-input>
+        </ion-item>
+        <ion-item class="edit-item">
+          <ion-label position="stacked">Sitio web</ion-label>
+          <ion-input [(ngModel)]="editForm.website" placeholder="https://..." type="url"></ion-input>
+        </ion-item>
+        <ion-item class="edit-item">
+          <ion-label position="stacked">Horario</ion-label>
+          <ion-input [(ngModel)]="editForm.openingHours" placeholder="Ej: Mo-Fr 09:00-19:00"></ion-input>
+        </ion-item>
+        <ion-item class="edit-item">
+          <ion-label position="stacked">Descripción</ion-label>
+          <ion-textarea [(ngModel)]="editForm.descripcion" placeholder="Especialidades, servicios..." rows="2"></ion-textarea>
+        </ion-item>
+      </div>
+
+      <!-- BOTONES ACCIÓN -->
+      <div class="panel-actions">
+        <ng-container *ngIf="!modoEdicion">
+          <ion-button class="btn-ashbis" fill="solid" size="small" shape="round"
+            (click)="activarEdicion()">
+            <ion-icon name="create-outline" slot="start"></ion-icon>
+            Editar info
+          </ion-button>
+          <ion-button *ngIf="marcadorSeleccionado.tipo === 'veterinary_care'"
+            class="btn-ashbis-outline" fill="outline" size="small" shape="round"
+            (click)="guardarVeterinariaFavorita()">
+            <ion-icon name="heart-outline" slot="start"></ion-icon>
+            Favorita
+          </ion-button>
+        </ng-container>
+        <ng-container *ngIf="modoEdicion">
+          <ion-button class="btn-ashbis" fill="solid" size="small" shape="round"
+            (click)="guardarInfoUsuario()">
+            Guardar
+          </ion-button>
+          <ion-button fill="outline" size="small" shape="round"
+            (click)="modoEdicion = false">
+            Cancelar
+          </ion-button>
+        </ng-container>
+      </div>
+    </div>
+
   </ion-card>
 
   <!-- CARRUSEL INFERIOR -->

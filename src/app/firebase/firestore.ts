@@ -344,4 +344,16 @@ export class FirestoreService {
       return null;
     }
   }
+
+  // 📍 Info pública de lugares (veterinarias / tiendas OSM)
+async getLugarInfo(placeId: string): Promise<any | null> {
+  const refDoc = doc(this.firestore, `lugares/${placeId}`);
+  const snap = await getDoc(refDoc);
+  return snap.exists() ? snap.data() : null;
+}
+
+async saveLugarInfo(placeId: string, info: any): Promise<void> {
+  const refDoc = doc(this.firestore, `lugares/${placeId}`);
+  await setDoc(refDoc, { ...info, actualizadoEn: serverTimestamp() }, { merge: true });
+}
 }
