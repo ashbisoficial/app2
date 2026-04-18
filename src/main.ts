@@ -9,7 +9,16 @@ import { AppComponent } from './app/app.component';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
+import { registerLocaleData } from '@angular/common';
+import localeEsCl from '@angular/common/locales/es-CL';
 
+registerLocaleData(localeEsCl);
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideIonicAngular()
+  ]
+});
 // ✅ Configuración de Firebase (tu proyecto)
 const firebaseConfig = {
   apiKey: 'AIzaSyAhVl-d7fikWwNB4gNPLV6ZcO6mg-CSoEg',

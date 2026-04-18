@@ -36,3 +36,10 @@
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
 
+:root {
+  --ion-color-danger: #8b0808;
+  --ion-color-danger-rgb: 139, 8, 8;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-shade: #7a0707;
+  --ion-color-danger-tint: #9c1f1f;
+}

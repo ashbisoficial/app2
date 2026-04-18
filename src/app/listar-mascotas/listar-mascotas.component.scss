@@ -37,7 +37,7 @@ ion-item.pet-card::part(native) {
   height: 100px !important;         /* mismo que ancho */
   border-radius: 50% !important;    /* redondo perfecto */
   object-fit: cover !important;
-  border: 3px solid #ff2b2b !important;
+  border: 3px solid #8b0808 !important;
   box-sizing: border-box !important;
 }
 
@@ -120,8 +120,9 @@ ion-avatar.pet-avatar::part(native) {
 .btn-outline {
   background: transparent;
   color: #fff;
-  border: 2px solid #ff2b2b;
+  border: 2px solid #8b0808;
 }
+
 
 .btn-outline:hover {
   background: rgba(255, 43, 43, 0.15);
@@ -129,13 +130,13 @@ ion-avatar.pet-avatar::part(native) {
 
 /* BOTÓN ROJO */
 .btn-red {
-  background: #ff2b2b;
+  background: #8b0808;
   color: #fff;
-  border: 2px solid #ff2b2b;
+  border: 2px solid #8b0808;
 }
 
 .btn-red:hover {
-  background: #d22020;
+  background: #8b0808;
 }
 
 /* ================================
@@ -180,4 +181,11 @@ ion-skeleton-text {
     rgba(255,255,255,0.04) 50%,
     rgba(255,255,255,0.02) 100%
   );
+}
+
+ion-fab-button[color="danger"] {
+  --background: #8b0808;      /* color del botón */
+  --background-activated: #6e0606; /* cuando se presiona */
+  --background-hover: #a50a0a;     /* hover (web) */
+  --color: #ffffff;           /* color del ícono */
 }

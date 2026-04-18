@@ -86,16 +86,10 @@ ion-text[color="danger"] {
   margin: -8px auto 10px auto;
   font-size: 12px;
   box-sizing: border-box;
-
-  /* Esto alinea el texto con el inicio de la línea roja:
-     - la línea roja tiene width:90% y está centrada,
-     - por tanto hay un hueco lateral = (100% - 90%) / 2 = 5% a cada lado.
-     Sumamos además el padding interno de la línea roja (6px) para que coincida exactamente. */
   padding-left: calc(5% + 6px);
   color: #d50d0d;                   /* aseguro color de error */
 }
 
-/* evitar márgenes inesperados del <p> y forzar alineación a la izquierda */
 ion-text[color="danger"] p {
   margin: 10;
   padding: 0;
@@ -109,16 +103,16 @@ ion-text[color="danger"] p {
 ============================ */
 
 /* Botón ingresar */
-ion-button[color="danger"] {
-  --background: #d30000;
-  --background-hover: #b80000;
-  --border-radius: 30px;
-  width: 90%;
-  max-width: 320px;
-  height: 43px;
-  margin: 18px auto;
-  font-weight: bold;
-  font-size: 15px;
+.btn-ashbis {
+  --background: #8b0808;
+  --background-hover: #b91c1c;
+  --background-activated: #991b1b;
+
+  --color: #ffffff;
+
+  --border-radius: 20px;
+  font-weight: 600;
+
 }
 
 /* Botón Google */
@@ -144,6 +138,7 @@ ion-button[color="danger"] {
 .google-btn img {
   width: 26px;
   height: 26px;
+  
 }
 
 /* Link olvidar contraseña */
@@ -156,15 +151,15 @@ ion-button[color="danger"] {
 }
 
 /* Botón crear */
-ion-button[color="medium"] {
-  --background: #d30000;
-  --color: #ffffff;
-  --border-radius: 30px;
-  width: 90%;
-  max-width: 320px;
-  height: 43px;
-  margin: 18px auto 10px auto;
-  font-weight: bold;
+.btn-crear{
+   --background: #ffffff;
+  --background-hover: #8b0808;
+  --background-activated: #991b1b;
+
+  --color: #000000;
+
+  --border-radius: 20px;
+  font-weight: 600;
 }
 
 /* Texto inferior */
