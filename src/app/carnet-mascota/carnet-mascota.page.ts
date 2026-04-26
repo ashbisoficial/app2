@@ -14,7 +14,10 @@ import { FirestoreService } from '../firebase/firestore';
   templateUrl: './carnet-mascota.page.html',
   styleUrls: ['./carnet-mascota.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonContent, IonButton, QRCodeComponent]
+  imports: [
+  CommonModule,
+  IonContent,
+  QRCodeComponent]
 })
 export class CarnetMascotaPage implements OnInit {
 

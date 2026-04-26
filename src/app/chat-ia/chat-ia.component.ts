@@ -19,20 +19,19 @@ import { sendOutline } from 'ionicons/icons';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    IonButton,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonInput,
-    IonSpinner,
-    IonButtons,
-    IonBackButton,
-    IonIcon
+  FormsModule,
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  IonButton,
+  IonList,
+  IonItem,
+  IonInput,
+  IonSpinner,
+  IonButtons,
+  IonBackButton,
+  IonIcon
   ]
 })
 export class ChatIaComponent {

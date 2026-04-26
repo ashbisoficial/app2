@@ -284,4 +284,26 @@ export class CrearMascotasComponent implements OnInit {
     });
     await a.present();
   }
+
+  mostrarCalendario = false;
+  fechaTemp: string | null = null;
+  abrirCalendario() {
+    this.fechaTemp = this.mascotaForm.get('fechaNacimiento')?.value || null;
+    this.mostrarCalendario = true;
+  }
+  cancelarFecha() {
+    this.mostrarCalendario = false;
+  }
+  confirmarFecha() {
+    if (!this.fechaTemp) return;
+
+    this.mascotaForm.patchValue({
+      fechaNacimiento: this.fechaTemp
+    });
+
+    const fecha = new Date(this.fechaTemp);
+    this.fechaFormateada = fecha.toLocaleDateString('es-CL');
+
+    this.mostrarCalendario = false;
+  }
 }

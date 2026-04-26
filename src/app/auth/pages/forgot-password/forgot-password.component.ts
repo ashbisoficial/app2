@@ -15,11 +15,25 @@ import {
   standalone: true,
   styleUrls: ['./forgot-password.component.scss'],
   imports: [
-    CommonModule, ReactiveFormsModule, FormsModule,
-    IonContent, IonInput, IonButton, IonSpinner,
-    IonCard, IonCardHeader, IonCardTitle, IonCardContent,
-    IonItem, IonLabel, IonText, IonIcon, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle
-  ],
+    CommonModule,
+  ReactiveFormsModule,
+  FormsModule,
+  IonContent,
+  IonInput,
+  IonButton,
+  IonSpinner,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonItem,
+  IonLabel,
+  IonText,
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
+  IonTitle],
 })
 export class ForgotPasswordComponent implements OnInit {
 

@@ -268,3 +268,70 @@ ion-item.is-invalid {
     max-width: 900px;
   }
 }
+
+/* MODAL OSCURO */
+.custom-calendar-modal {
+  --background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* CONTENEDOR */
+.calendar-content {
+  --background: #1c2b36;
+  border-radius: 20px;
+  padding: 20px;
+  max-width: 350px;
+  margin: auto;
+}
+
+/* DATETIME (ruedas) */
+ion-datetime {
+  --background: transparent;
+  color: #ffffff;
+  text-align: center;
+
+  /* tamaño del texto */
+  font-size: 20px;
+}
+
+/* resaltar selección */
+ion-datetime::part(wheel-item) {
+  color: #9aa5b1;
+  font-size: 18px;
+}
+
+ion-datetime::part(wheel-item active) {
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+/* línea central tipo iOS */
+ion-datetime::part(wheel-highlight) {
+  border-top: 2px solid #ffffff33;
+  border-bottom: 2px solid #ffffff33;
+}
+
+/* BOTONES */
+.calendar-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.calendar-actions ion-button {
+  font-weight: 500;
+}
+
+/* cancelar */
+.calendar-actions ion-button:first-child {
+  color: #ffffff;
+}
+
+/* definir */
+.calendar-actions ion-button:last-child {
+  --background: transparent;
+  color: #ff4d4d;
+}

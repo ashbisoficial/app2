@@ -48,35 +48,29 @@ import { Models } from '../models/models';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule, // 🔥 NECESARIO PARA ngModel
-    RouterLink,
-    IonHeader,
-    IonToolbar,
-    IonButtons,
-    IonBackButton,
-    IonTitle,
-    IonContent,
-    IonSpinner,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardSubtitle,
-    IonCardContent,
-    IonButton,
-    IonIcon,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonAvatar,
-    IonSelect,
-    IonSelectOption,
-    IonNote,
-
-    // 🔥 IMPORTS CLAVE
-    IonSegment,
-    IonSegmentButton,
-
-    QRCodeComponent
+  FormsModule,
+  RouterLink,
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
+  IonTitle,
+  IonContent,
+  IonSpinner,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonCardContent,
+  IonButton,
+  IonItem,
+  IonLabel,
+  IonAvatar,
+  IonSelect,
+  IonSelectOption,
+  IonSegment,
+  IonSegmentButton,
+  QRCodeComponent
   ]
 })
 export class MascotaQrComponent implements OnInit, OnDestroy {

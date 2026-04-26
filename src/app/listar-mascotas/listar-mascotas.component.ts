@@ -24,12 +24,12 @@ import { add, qrCodeOutline } from 'ionicons/icons';
   standalone: true,
   imports: [
     NgIf, NgFor, RouterLink,
-    IonHeader, IonToolbar, IonTitle, IonContent,
-    IonRefresher, IonRefresherContent,
-    IonList, IonItem, IonAvatar, IonSkeletonText,
-    IonButton, IonLabel, IonIcon,
-    IonFab, IonFabButton,
-    IonButtons, IonBackButton   // 🔥 NECESARIOS PARA EVITAR EL ERROR
+  IonHeader, IonToolbar, IonTitle, IonContent,
+  IonRefresher, IonRefresherContent,
+  IonList, IonItem, IonAvatar, IonSkeletonText,
+  IonLabel, IonIcon,
+  IonFab, IonFabButton,
+  IonButtons, IonBackButton   // 🔥 NECESARIOS PARA EVITAR EL ERROR
   ],
   templateUrl: './listar-mascotas.component.html',
   styleUrls: ['./listar-mascotas.component.scss'],

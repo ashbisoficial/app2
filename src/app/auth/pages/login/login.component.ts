@@ -31,18 +31,17 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrls: ['./login.component.scss'],
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    FormsModule,
-    IonContent,
-    IonInput,
-    IonButton,
-    IonItem,
-    IonLabel,
-    IonIcon,
-    IonText,
-    IonThumbnail,
-    IonImg,
-    RouterLink
+  ReactiveFormsModule,
+  FormsModule,
+  IonContent,
+  IonInput,
+  IonButton,
+  IonItem,
+  IonLabel,
+  IonIcon,
+  IonText,
+  IonThumbnail,
+  IonImg
   ],
 })
 export class LoginComponent implements OnInit, OnDestroy {

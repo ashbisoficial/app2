@@ -68,12 +68,6 @@
                 <ion-input type="text" formControlName="numeroChip" placeholder="15 dígitos" clearInput></ion-input>
               </ion-item>
 
-              <!-- Edad -->
-              <ion-item class="ion-margin-top" fill="solid" [class.is-invalid]="isInvalid('edad')">
-                <ion-label position="stacked">Edad (años) <span class="req">*</span></ion-label>
-                <ion-input type="number" formControlName="edad" placeholder="Ej: 2" clearInput></ion-input>
-              </ion-item>
-
               <!-- Sexo -->
               <ion-item class="ion-margin-top" fill="solid" [class.is-invalid]="isInvalid('sexo')">
                 <ion-label position="stacked">Sexo <span class="req">*</span></ion-label>
@@ -85,20 +79,49 @@
               </ion-item>
 
               <!-- Fecha nacimiento -->
-              <ion-item class="ion-margin-top" fill="solid">
-                <ion-label position="stacked">Fecha de nacimiento</ion-label>
-                <ion-datetime-button datetime="picker-fecha" class="datetime-button"></ion-datetime-button>
-                <ion-modal [keepContentsMounted]="true">
-                  <ng-template>
-                    <ion-datetime id="picker-fecha" presentation="date"
-                      [max]="fechaActual" locale="es-ES" (ionChange)="onIonDateChange($event)">
+            <ion-item>
+              <ion-label position="stacked">Fecha de nacimiento</ion-label>
+                
+              <ion-button expand="block" fill="outline" (click)="abrirCalendario()">
+                {{ fechaFormateada || 'Seleccionar fecha' }}
+              </ion-button>
+
+              <ion-modal [isOpen]="mostrarCalendario" class="custom-calendar-modal">
+                <ng-template>
+
+                  <ion-content class="calendar-content">
+
+                    <!-- Calendario tipo wheel -->
+                    <ion-datetime
+                      presentation="date"
+                      preferWheel="true"
+                      [max]="fechaActual"
+                      [value]="fechaTemp">
                     </ion-datetime>
-                  </ng-template>
-                </ion-modal>
-                <ion-note slot="end" color="medium" class="fecha-note">
-                  {{ fechaFormateada || 'Sin seleccionar' }}
-                </ion-note>
+
+                    <!-- Botones -->
+                    <div class="calendar-actions">
+                      <ion-button fill="clear" (click)="cancelarFecha()">
+                        Cancelar
+                      </ion-button>
+
+                      <ion-button color="danger" (click)="confirmarFecha()">
+                        Definir
+                      </ion-button>
+                    </div>
+
+                  </ion-content>
+
+                </ng-template>
+              </ion-modal>
+            </ion-item>
+
+              <!-- Edad -->
+              <ion-item class="ion-margin-top" fill="solid" [class.is-invalid]="isInvalid('edad')">
+                <ion-label position="stacked">Edad (años) <span class="req">*</span></ion-label>
+                <ion-input type="number" formControlName="edad" placeholder="Ej: 2" clearInput></ion-input>
               </ion-item>
+
 
               <!-- Especie -->
               <ion-item class="ion-margin-top" fill="solid" [class.is-invalid]="isInvalid('especie')">
