@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { query, where, orderBy, CollectionReference } from '@angular/fire/firestore';
 import { arrayUnion, arrayRemove } from 'firebase/firestore';
+import { Auth } from '@angular/fire/auth';
+import { SecurityService } from 'src/app/services/security.service';
 
 export type Cita = {
   id?: string;
@@ -85,6 +87,8 @@ export type VeterinariaFavorita = {
 export class FirestoreService {
 
   firestore: Firestore = inject(Firestore);
+  private auth: Auth = inject(Auth);
+  private security = inject(SecurityService);
 
   getCollectionChanges<tipo>(path: string) {
     const itemCollection = collection(this.firestore, path);
@@ -92,6 +96,7 @@ export class FirestoreService {
   }
 
   async createDocument<tipo>(path: string, data: tipo, id: string = '') {
+    this.assertOwnershipForWrite(path, data as any);
     let refDoc;
     if (id) {
       refDoc = doc(this.firestore, `${path}/${id}`);
@@ -99,7 +104,7 @@ export class FirestoreService {
       const refCollection = collection(this.firestore, path);
       refDoc = doc(refCollection);
     }
-    const dataDoc: any = data;
+    const dataDoc: any = this.security.sanitizeFirestoreObject((data as any) ?? {});
     dataDoc.id = refDoc.id;
     dataDoc.date = serverTimestamp();
     await setDoc(refDoc, dataDoc);
@@ -125,9 +130,11 @@ export class FirestoreService {
   }
 
   async updateDocument(path: string, data: any) {
+    this.assertOwnershipForWrite(path, data);
     const refDoc = doc(this.firestore, path);
-    data.updateAt = serverTimestamp();
-    return await updateDoc(refDoc, data);
+    const payload = this.security.sanitizeFirestoreObject(data ?? {});
+    payload.updateAt = serverTimestamp();
+    return await updateDoc(refDoc, payload);
   }
 
   async getDocument(path: string): Promise<any | null> {
@@ -149,8 +156,9 @@ export class FirestoreService {
   }
 
   async updatePet(id: string, data: Partial<Mascota>): Promise<void> {
+    this.assertAuthenticated();
     const r = doc(this.firestore, 'mascotas', id);
-    await updateDoc(r, data as any);
+    await updateDoc(r, this.security.sanitizeFirestoreObject(data as any));
   }
 
   async uploadPetPhotos(uid: string, petId: string, files: File[]): Promise<string[]> {
@@ -322,5 +330,29 @@ export class FirestoreService {
   async saveLugarInfo(placeId: string, info: any): Promise<void> {
     const refDoc = doc(this.firestore, `lugares/${placeId}`);
     await setDoc(refDoc, { ...info, actualizadoEn: serverTimestamp() }, { merge: true });
+  }
+
+  private assertAuthenticated(): string {
+    const uid = this.auth.currentUser?.uid;
+    if (!uid) {
+      throw new Error('Usuario no autenticado');
+    }
+    return uid;
+  }
+
+  private assertOwnershipForWrite(path: string, data: any): void {
+    const uid = this.assertAuthenticated();
+    if (path === 'usuarios') {
+      if (data?.uid && data.uid !== uid) throw new Error('No autorizado');
+      return;
+    }
+    if (path.startsWith('usuarios/')) {
+      const targetUid = path.split('/')[1];
+      if (targetUid !== uid) throw new Error('No autorizado');
+      return;
+    }
+    if (path === 'mascotas') {
+      if (data?.uidUsuario && data.uidUsuario !== uid) throw new Error('No autorizado');
+    }
   }
 }

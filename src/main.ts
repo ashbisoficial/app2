@@ -1,48 +1,42 @@
+import { registerLocaleData } from '@angular/common';
+import localeEsCl from '@angular/common/locales/es-CL';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { RouteReuseStrategy, provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
-import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
-
-import { routes } from './app/app.routes';
-import { AppComponent } from './app/app.component';
-
-// 🔥 Firebase imports
+import { provideIonicAngular, IonicRouteStrategy } from '@ionic/angular/standalone';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
-import { registerLocaleData } from '@angular/common';
-import localeEsCl from '@angular/common/locales/es-CL';
+import { provideAppCheck, initializeAppCheck, ReCaptchaV3Provider } from '@angular/fire/app-check';
+import { getApp } from 'firebase/app';
+
+import { AppComponent } from './app/app.component';
+import { routes } from './app/app.routes';
+import { authInterceptor } from './app/interceptors/auth.interceptor';
+import { environment } from './environments/environment';
 
 registerLocaleData(localeEsCl);
 
-bootstrapApplication(AppComponent, {
-  providers: [
-    provideIonicAngular()
-  ]
-});
-// ✅ Configuración de Firebase (tu proyecto)
-const firebaseConfig = {
-  apiKey: 'AIzaSyAhVl-d7fikWwNB4gNPLV6ZcO6mg-CSoEg',
-  authDomain: 'ashbis-ae5b2.firebaseapp.com',
-  projectId: 'ashbis-ae5b2',
-  storageBucket: 'ashbis-ae5b2.firebasestorage.app',
-  messagingSenderId: '691736988474',
-  appId: '1:691736988474:web:8fb6e043aa8e0b0c779e03',
-  measurementId: 'G-8P1SNJ4TL3'
-};
+if (!environment.production) {
+  (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+}
 
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
-
-    // ✅ 🔥 INICIALIZAR FIREBASE
-    provideFirebaseApp(() => initializeApp(firebaseConfig)),
-
-    // ✅ AUTH (LOGIN)
+    provideHttpClient(withInterceptors([authInterceptor])),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
-
-    // ✅ FIRESTORE (BASE DE DATOS)
-    provideFirestore(() => getFirestore())
-  ],
-});
+    provideFirestore(() => getFirestore()),
+    provideAppCheck(() =>
+      initializeAppCheck(getApp(), {
+        provider: new ReCaptchaV3Provider(
+          environment.appCheckSiteKey || 'debug-placeholder'
+        ),
+        isTokenAutoRefreshEnabled: true
+      })
+    )
+  ]
+}).catch((err) => console.error(err));

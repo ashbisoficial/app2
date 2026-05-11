@@ -1,28 +1,29 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
-import { FirestoreService } from 'src/app/firebase/firestore';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
+  FormControl,
+  FormGroup,
   FormsModule,
   ReactiveFormsModule,
-  Validators,
-  FormGroup,
-  FormControl
+  Validators
 } from '@angular/forms';
-import { AuthenticationService } from 'src/app/firebase/authentication';
-import { RouterLink, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import {
-  IonContent,
-  IonInput,
   IonButton,
+  IonContent,
+  IonIcon,
+  IonImg,
+  IonInput,
   IonItem,
   IonLabel,
-  IonIcon,
   IonText,
-  IonThumbnail,
-  IonImg
+  IonThumbnail
 } from '@ionic/angular/standalone';
 import { Subject, takeUntil } from 'rxjs';
+import { AuthenticationService } from 'src/app/firebase/authentication';
+import { FirestoreService } from 'src/app/firebase/firestore';
+import { SecurityService } from 'src/app/services/security.service';
 
 @Component({
   selector: 'app-login',
@@ -31,27 +32,26 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrls: ['./login.component.scss'],
   imports: [
     CommonModule,
-  ReactiveFormsModule,
-  FormsModule,
-  IonContent,
-  IonInput,
-  IonButton,
-  IonItem,
-  IonLabel,
-  IonIcon,
-  IonText,
-  IonThumbnail,
-  IonImg
-  ],
+    ReactiveFormsModule,
+    FormsModule,
+    IonContent,
+    IonInput,
+    IonButton,
+    IonItem,
+    IonLabel,
+    IonIcon,
+    IonText,
+    IonThumbnail,
+    IonImg
+  ]
 })
 export class LoginComponent implements OnInit, OnDestroy {
-
-  private fb = inject(FormBuilder);
-  private authenticationService = inject(AuthenticationService);
-  private router = inject(Router);
-  private firestoreService = inject(FirestoreService);
-
-  private destroy$ = new Subject<void>();
+  private readonly fb = inject(FormBuilder);
+  private readonly authenticationService = inject(AuthenticationService);
+  private readonly router = inject(Router);
+  private readonly firestoreService = inject(FirestoreService);
+  private readonly security = inject(SecurityService);
+  private readonly destroy$ = new Subject<void>();
 
   datosForm!: FormGroup<{
     email: FormControl<string>;
@@ -62,143 +62,105 @@ export class LoginComponent implements OnInit, OnDestroy {
   showPass = false;
   loginError: string | null = null;
 
-  ngOnInit() {
-
+  ngOnInit(): void {
     this.datosForm = this.fb.group({
-      email: this.fb.nonNullable.control('', [
-        Validators.required,
-        Validators.email
-      ]),
-      password: this.fb.nonNullable.control('', [
-        Validators.required,
-        Validators.minLength(6)
-      ]),
+      email: this.fb.nonNullable.control('', [Validators.required, Validators.email]),
+      password: this.fb.nonNullable.control('', [Validators.required, Validators.minLength(6)])
     });
 
-    //  Control limpio de sesión
     this.authenticationService.authState$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(user => {
-        if (user) {
-          this.router.navigate(['tabs/home'], { replaceUrl: true });
-        }
+      .subscribe((user) => {
+        if (user) this.router.navigate(['tabs/home'], { replaceUrl: true });
       });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  get email() {
+  get email(): FormControl<string> {
     return this.datosForm.controls.email;
   }
 
-  get password() {
+  get password(): FormControl<string> {
     return this.datosForm.controls.password;
   }
 
-  async login() {
-
+  async login(): Promise<void> {
     this.datosForm.markAllAsTouched();
     this.loginError = null;
-
     if (this.datosForm.invalid) return;
 
-    const email = this.email.value;
+    const email = this.security.sanitizeText(this.email.value);
     const password = this.password.value;
+    if (!this.security.canAttemptLogin(email)) {
+      this.loginError = 'Demasiados intentos. Espera 15 minutos e intenta nuevamente.';
+      return;
+    }
 
     this.cargando = true;
-
     try {
       await this.authenticationService.login(email, password);
+      this.security.resetLoginAttempts(email);
       this.router.navigate(['tabs/home'], { replaceUrl: true });
-
-    } catch (err: any) {
-
-      if (err?.code === 'auth/invalid-email') {
-        this.loginError = 'El email ingresado no es válido.';
-      } else if (err?.code === 'auth/user-not-found') {
-        this.loginError = 'El usuario no existe.';
-      } else if (err?.code === 'auth/wrong-password') {
-        this.loginError = 'La contraseña es incorrecta.';
-      } else {
-        this.loginError = 'Credenciales incorrectas.';
-      }
-
+    } catch (err) {
+      console.error(err);
+      this.loginError = 'Credenciales incorrectas.';
     } finally {
       this.cargando = false;
     }
   }
 
-  //  LOGIN CON GOOGLE (VERSIÓN FINAL)
-  async loginGoogle() {
-
+  async loginGoogle(): Promise<void> {
     this.loginError = null;
     this.cargando = true;
-
     try {
       const cred = await this.authenticationService.loginWithGoogle();
       const user = cred.user;
-
       if (!user) throw new Error('No se obtuvo usuario');
 
-      //  Separar nombre y apellido
       const fullName = user.displayName || '';
       const parts = fullName.split(' ');
-
-      const nombre = parts[0] || '';
-      const apellido = parts.slice(1).join(' ') || '';
+      const nombre = this.security.sanitizeText(parts[0] || '');
+      const apellido = this.security.sanitizeText(parts.slice(1).join(' ') || '');
 
       const datosUser = {
         id: user.uid,
         nombre,
         apellido,
-        email: user.email || '',
-        telefono: user.phoneNumber || '',
-        foto: user.photoURL || '',
+        email: this.security.sanitizeText(user.email || ''),
+        telefono: this.security.sanitizeText(user.phoneNumber || ''),
+        foto: this.security.sanitizeText(user.photoURL || ''),
         provider: 'google'
       };
 
-      //  Verificar si existe
-      const userExistente = await this.firestoreService.getDocument(
-        `usuarios/${user.uid}`
-      );
-
+      const userExistente = await this.firestoreService.getDocument(`usuarios/${user.uid}`);
       if (!userExistente) {
-        //  Crear usuario
-        await this.firestoreService.createDocument(
-          'usuarios',
-          datosUser,
-          user.uid
-        );
+        await this.firestoreService.createDocument('usuarios', datosUser, user.uid);
       } else {
-        //  Actualizar datos (IMPORTANTE)
-        await this.firestoreService.updateDocument(
-          `usuarios/${user.uid}`,
-           {
-            nombre,
-            apellido,
-            foto: user.photoURL || ''
-          }
-        );
+        await this.firestoreService.updateDocument(`usuarios/${user.uid}`, {
+          nombre,
+          apellido,
+          foto: this.security.sanitizeText(user.photoURL || '')
+        });
       }
 
       this.router.navigate(['tabs/home'], { replaceUrl: true });
-
     } catch (error) {
       console.error(error);
-      this.loginError = 'No se pudo iniciar sesión con Google.';
+      this.loginError = 'No se pudo iniciar sesion con Google.';
     } finally {
       this.cargando = false;
     }
   }
 
-  irARegistro() {
+  irARegistro(): void {
     this.router.navigate(['/registro'], { replaceUrl: true });
   }
 
-  irARecuperarPassword() {
+  irARecuperarPassword(): void {
     this.router.navigate(['/forgot-password']);
   }
 }

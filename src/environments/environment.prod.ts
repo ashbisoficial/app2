@@ -9,5 +9,7 @@ export const environment = {
     appId: "1:691736988474:web:8fb6e043aa8e0b0c779e03",
     measurementId: "G-8P1SNJ4TL3"
   },
-  geminiApiKey: 'AIzaSyDk5H_tyyYVhMh2SbBFsDJAjpsjmbLRg4c'
+  aiProxyUrl: "/api/ai-proxy",
+  appCheckSiteKey: "",
+  appCheckDebug: false
 };

@@ -1,19 +1,25 @@
-// src/app/perfil/perfil.component.ts
+import { DatePipe, NgIf } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule, NgIf, DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import {
+  IonButton,
+  IonCard,
+  IonCol,
+  IonContent,
+  IonGrid,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonRow,
+  IonSkeletonText
+} from '@ionic/angular/standalone';
+import { LoadingController, ToastController } from '@ionic/angular';
+import { Subject, takeUntil } from 'rxjs';
 import { AuthenticationService } from '../firebase/authentication';
 import { FirestoreService } from '../firebase/firestore';
 import { Models } from '../models/models';
-
-import {
-  IonContent, IonCard, IonSkeletonText, IonItem, IonLabel, IonInput,
-  IonButton, IonGrid, IonRow, IonCol
-} from '@ionic/angular/standalone';
-
-import { ToastController, LoadingController } from '@ionic/angular';
-import { Subject, takeUntil } from 'rxjs';
-import { Router } from '@angular/router';
+import { SecurityService } from '../services/security.service';
 
 @Component({
   selector: 'app-perfil',
@@ -23,15 +29,24 @@ import { Router } from '@angular/router';
   imports: [
     NgIf,
     ReactiveFormsModule,
-    IonContent, IonCard, IonSkeletonText, IonItem, IonLabel, IonInput,
-    IonButton, IonGrid, IonRow, IonCol
+    IonContent,
+    IonCard,
+    IonSkeletonText,
+    IonItem,
+    IonLabel,
+    IonInput,
+    IonButton,
+    IonGrid,
+    IonRow,
+    IonCol
   ],
   providers: [DatePipe]
 })
 export class PerfilComponent implements OnInit, OnDestroy {
-  private destroy$ = new Subject<void>();
-  private auth = inject(AuthenticationService);
-  private router = inject(Router);
+  private readonly destroy$ = new Subject<void>();
+  private readonly auth = inject(AuthenticationService);
+  private readonly router = inject(Router);
+  private readonly security = inject(SecurityService);
 
   authenticationService: AuthenticationService = inject(AuthenticationService);
   firestoreService: FirestoreService = inject(FirestoreService);
@@ -41,28 +56,24 @@ export class PerfilComponent implements OnInit, OnDestroy {
 
   user: { uid: string; email: string | null; name: string | null } | null = null;
   user_profile!: Models.Auth.UserProfile;
-
   cargando = false;
   editMode = false;
-
   defaultPhoto = 'assets/img/foto_avatar.jpg';
 
-  // Reactive Form
   profileForm = this.fb.group({
-    nombre: ['',[Validators.required, Validators.minLength(2)]],
-    apellido: ['',[Validators.required, Validators.minLength(2)]],
-    email: [{value: '', disabled: true}, [Validators.required, Validators.email]], // lo dejamos sólo lectura
-    telefono: ['',[Validators.minLength(6)]],
+    nombre: ['', [Validators.required, Validators.minLength(2)]],
+    apellido: ['', [Validators.required, Validators.minLength(2)]],
+    email: [{ value: '', disabled: true }, [Validators.required, Validators.email]],
+    telefono: ['', [Validators.minLength(6)]],
     region: [''],
-    direccion: [''],
+    direccion: ['']
   });
 
   constructor() {
     this.cargando = true;
-
     this.authenticationService.authState$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(res => {
+      .subscribe((res) => {
         if (res) {
           this.user = { uid: res.uid, email: res.email, name: res.displayName };
           this.getDatosProfile(res.uid);
@@ -73,47 +84,44 @@ export class PerfilComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnInit() {}
+  ngOnInit(): void {}
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  getDatosProfile(uid: string) {
+  getDatosProfile(uid: string): void {
     this.firestoreService
       .getDocumentChanges<Models.Auth.UserProfile>(`${Models.Auth.PathUsers}/${uid}`)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(res => {
+      .subscribe((res) => {
         if (res) {
           this.user_profile = res;
-          // Cargar datos al form
           this.profileForm.patchValue({
             nombre: res.nombre ?? '',
             apellido: res.apellido ?? '',
             email: res.email ?? this.user?.email ?? '',
             telefono: res.telefono ?? '',
             region: res.region ?? '',
-            direccion: res.direccion ?? '',
+            direccion: res.direccion ?? ''
           });
         }
         this.cargando = false;
       });
   }
 
-  // Para Timestamp Firestore opcional:
   get fechaNacimiento(): Date | null {
     const ts: any = (this.user_profile as any)?.date;
-    return ts?.toDate ? ts.toDate() : (ts instanceof Date ? ts : null);
+    return ts?.toDate ? ts.toDate() : ts instanceof Date ? ts : null;
   }
 
-  habilitarEdicion() {
+  habilitarEdicion(): void {
     this.editMode = true;
   }
 
-  cancelarEdicion() {
+  cancelarEdicion(): void {
     this.editMode = false;
-    // Restaurar valores originales desde user_profile
     if (this.user_profile) {
       this.profileForm.patchValue({
         nombre: this.user_profile.nombre ?? '',
@@ -121,15 +129,13 @@ export class PerfilComponent implements OnInit, OnDestroy {
         email: this.user_profile.email ?? this.user?.email ?? '',
         telefono: this.user_profile.telefono ?? '',
         region: this.user_profile.region ?? '',
-        direccion: this.user_profile.direccion ?? '',
+        direccion: this.user_profile.direccion ?? ''
       });
     }
   }
 
-  async guardar() {
+  async guardar(): Promise<void> {
     if (!this.user?.uid) return;
-
-    // Validaciones
     if (this.profileForm.invalid) {
       this.profileForm.markAllAsTouched();
       this.showToast('Revisa los campos resaltados.', 'danger');
@@ -140,22 +146,18 @@ export class PerfilComponent implements OnInit, OnDestroy {
     await loading.present();
 
     const payload = {
-      nombre: this.profileForm.get('nombre')!.value?.trim() ?? '',
-      apellido: this.profileForm.get('apellido')!.value?.trim() ?? '',
-      // email no lo sobrescribimos aquí si está controlado por Auth
-      telefono: this.profileForm.get('telefono')!.value ?? '',
-      region: this.profileForm.get('region')!.value ?? '',
-      direccion: this.profileForm.get('direccion')!.value ?? '',
+      nombre: this.security.sanitizeText(this.profileForm.get('nombre')!.value?.trim() ?? ''),
+      apellido: this.security.sanitizeText(this.profileForm.get('apellido')!.value?.trim() ?? ''),
+      telefono: this.security.sanitizeText(this.profileForm.get('telefono')!.value ?? ''),
+      region: this.security.sanitizeText(this.profileForm.get('region')!.value ?? ''),
+      direccion: this.security.sanitizeText(this.profileForm.get('direccion')!.value ?? '')
     };
 
     try {
-      await this.firestoreService.updateDocument(
-        `${Models.Auth.PathUsers}/${this.user.uid}`,
-        payload
-      );
+      await this.firestoreService.updateDocument(`${Models.Auth.PathUsers}/${this.user.uid}`, payload);
       this.editMode = false;
       this.showToast('Perfil actualizado correctamente.', 'success');
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error al actualizar perfil', err);
       this.showToast('No se pudo actualizar el perfil.', 'danger');
     } finally {
@@ -163,12 +165,13 @@ export class PerfilComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async showToast(message: string, color: 'success' | 'danger' | 'primary' = 'primary') {
+  private async showToast(message: string, color: 'success' | 'danger' | 'primary' = 'primary'): Promise<void> {
     const t = await this.toastCtrl.create({ message, duration: 1800, color });
     t.present();
   }
-   async logout() {
-        await this.auth.logout();
-        this.router.navigate(['/login'], { replaceUrl: true });
-    }
+
+  async logout(): Promise<void> {
+    await this.auth.logout();
+    this.router.navigate(['/login'], { replaceUrl: true });
+  }
 }
